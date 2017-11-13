@@ -17,15 +17,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.StartMenuActivity" />
-        <activity android:name="ykim164cs242.tournamentor.ListItem.MatchListItem" />
+        <activity android:name=".ListItem.MatchListItem" />
         <activity
             android:name=".Activity.UserMainActivity"
-            android:theme="@style/TournamentorThemeWithActionBar" />
+            android:theme="@style/TournamentorThemeWithActionBar">
+
+        </activity>
         <activity android:name=".Fragments.MatchListTab" />
         <activity android:name=".Activity.TeamListActivity" />
-        <activity android:name=".LeagueInfoPopUp"
-            android:theme="@style/AppTheme.popUpTheme">
-        </activity>
+        <activity
+            android:name=".LeagueInfoPopUp"
+            android:theme="@style/AppTheme.popUpTheme" />
+        <activity android:name=".Activity.StandingsActivity" />
+        <activity android:name=".Activity.SelectChannelActivity"></activity>
     </application>
 
 </manifest>

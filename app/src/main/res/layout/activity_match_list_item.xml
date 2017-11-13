@@ -37,15 +37,15 @@
             android:layout_height="wrap_content"
             android:text="Competition Name"
             android:textAlignment="center"
-            android:textColor="#FF5733"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="#FF5733"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="                            " />
+            android:text="        " />
 
         <TextView
             android:id="@+id/game_date"
@@ -70,7 +70,7 @@
             android:id="@+id/textView13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:text="                   " />
     </TableRow>
 
     <TableRow
@@ -98,10 +98,11 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             app:layout_constraintTop_toBottomOf="@+id/comp_name"
             tools:layout_editor_absoluteX="102dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="               " />
+            android:text="     " />
         <TextView
             android:id="@+id/score_a"
             android:layout_width="wrap_content"
@@ -124,8 +125,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="FT"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <TextView
             android:id="@+id/textView7"
@@ -137,30 +137,30 @@
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="               " />
+            android:text="                                       " />
 
         <TextView
             android:id="@+id/textView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="                                  " />
+            android:text=" " />
 
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="               " />
+            android:text="  " />
 
         <TextView
             android:id="@+id/textView17"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="     " />
+            android:text="        " />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/starred"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
 
             app:srcCompat="@mipmap/ic_launcher" />
 
@@ -191,10 +191,11 @@
             app:layout_constraintTop_toBottomOf="@+id/team_a"
             android:textAlignment="center"
             tools:layout_editor_absoluteX="102dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="               " />
+            android:text="    " />
         <TextView
             android:id="@+id/score_b"
             android:layout_width="wrap_content"
@@ -210,10 +211,11 @@
         android:id="@+id/live_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="●"
+        android:text="LIVE"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        app:layout_constraintHorizontal_bias="0.941"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/comp_name"
         app:layout_constraintRight_toLeftOf="@+id/game_time"
-        app:layout_constraintHorizontal_bias="0.941" />
+        app:layout_constraintTop_toBottomOf="@+id/comp_name" />
 
 </TableLayout>

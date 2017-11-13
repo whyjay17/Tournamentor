@@ -7,7 +7,7 @@ package ykim164cs242.tournamentor.ListItem;
  */
 public class MatchListItem {
 
-    private int id;
+    private String id;
     private String fieldName;
     private String gameTime; // Live-time of the game
     private String gameDate; // Date of the game
@@ -18,7 +18,7 @@ public class MatchListItem {
     private boolean isLive;
     private boolean isStarred;
 
-    public MatchListItem(int id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive, boolean isStarred) {
+    public MatchListItem(String id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive, boolean isStarred) {
         this.id = id;
         this.fieldName = fieldName;
         this.gameTime = gameTime;
@@ -36,11 +36,11 @@ public class MatchListItem {
 
     // Getters and Setters
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -106,5 +106,13 @@ public class MatchListItem {
 
     public void setGameDate(String gameDate) {
         this.gameDate = gameDate;
+    }
+
+    public boolean isStarred() {
+        return isStarred;
+    }
+
+    public void setStarred(boolean starred) {
+        isStarred = starred;
     }
 }

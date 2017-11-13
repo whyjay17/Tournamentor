@@ -1,13 +1,21 @@
 package ykim164cs242.tournamentor.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
+import ykim164cs242.tournamentor.Activity.UserMainActivity;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
@@ -17,6 +25,9 @@ import ykim164cs242.tournamentor.R;
  */
 
 public class MatchListAdapter extends BaseAdapter{
+
+    DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference tournamentReference = rootReference.child("Tournaments");
 
     private Context context;
     private List<MatchListItem> matchList;
@@ -48,9 +59,9 @@ public class MatchListAdapter extends BaseAdapter{
      */
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
-        View view = View.inflate(context, R.layout.activity_match_list_item, null);
+        final View view = View.inflate(context, R.layout.activity_match_list_item, null);
         TextView fieldName = (TextView) view.findViewById(R.id.comp_name);
         TextView gameTime = (TextView) view.findViewById(R.id.game_time);
         TextView gameDate = (TextView) view.findViewById(R.id.game_date);
@@ -59,6 +70,10 @@ public class MatchListAdapter extends BaseAdapter{
         TextView scoreA = (TextView) view.findViewById(R.id.score_a);
         TextView scoreB = (TextView) view.findViewById(R.id.score_b);
         TextView liveStatus = (TextView) view.findViewById(R.id.live_status);
+
+        // Favorite Star
+
+        final ImageView starred = (ImageView) view.findViewById(R.id.starred);
 
         // Set Texts for TextViews
 
@@ -70,6 +85,10 @@ public class MatchListAdapter extends BaseAdapter{
         scoreA.setText(Integer.toString(matchList.get(position).getScoreA()));
         scoreB.setText(Integer.toString(matchList.get(position).getScoreB()));
 
+        final DatabaseReference matchReference = tournamentReference.child("Test Tournament").child("Matches").child(matchList.get(position).getGameDate() + " "
+                + matchList.get(position).getTeamA() + " vs "
+        + matchList.get(position).getTeamB()).child("isStarred");
+
         // Live Status : Blink effect if game is live
 
         if(matchList.get(position).isLive()) {
@@ -77,6 +96,28 @@ public class MatchListAdapter extends BaseAdapter{
         } else {
             liveStatus.setText("");
         }
+
+        // Starred Status: Turns star into Yellow if the game is starred
+
+        if(matchList.get(position).isStarred()) {
+            starred.setColorFilter(Color.argb(255, 255, 214, 51));
+        } else { }
+
+        starred.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(matchList.get(position).isStarred()) {
+                    matchList.get(position).setStarred(false);
+                    matchReference.setValue(false);
+                    starred.setColorFilter(Color.argb(255, 255, 255, 255));
+                }
+                else {
+                    matchList.get(position).setStarred(true);
+                    matchReference.setValue(true);
+                    starred.setColorFilter(Color.argb(255, 255, 214, 51));
+                }
+            }
+        });
 
         return view;
     }

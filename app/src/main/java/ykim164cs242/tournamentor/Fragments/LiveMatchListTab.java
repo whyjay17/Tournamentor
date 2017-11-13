@@ -1,8 +1,8 @@
 package ykim164cs242.tournamentor.Fragments;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +17,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import ykim164cs242.tournamentor.ListItem.ChannelListItem;
-import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.Adapter.MatchListAdapter;
+import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
-public class MatchListTab extends Fragment {
+public class LiveMatchListTab extends Fragment {
+
 
     ListView matchListView;
 
@@ -67,17 +67,6 @@ public class MatchListTab extends Fragment {
         adapter = new MatchListAdapter(getContext(), matchListItems);
         matchListView.setAdapter(adapter);
 
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("id").setValue("Nov 13, 2017 Team Eagles vs Team Tigers");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("fieldName").setValue("UIUC Sixpack Field A");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("gameTime").setValue("FT");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("gameDate").setValue("Nov 13, 2017");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("teamA").setValue("Team Eagles");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("teamB").setValue("Team Tigers");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("scoreA").setValue(0);
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("scoreB").setValue(3);
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("isLive").setValue(false);
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("isStarred").setValue(false);
-
         return view;
 
     }
@@ -98,7 +87,7 @@ public class MatchListTab extends Fragment {
 
                     matchIDList.add(snapshot.child("gameDate").getValue().toString() + " "
                             + snapshot.child("teamA").getValue().toString()
-                    + " vs " + snapshot.child("teamB").getValue().toString());
+                            + " vs " + snapshot.child("teamB").getValue().toString());
 
                     fieldNameList.add(snapshot.child("fieldName").getValue().toString());
                     gameTimeList.add(snapshot.child("gameTime").getValue().toString());
@@ -112,8 +101,12 @@ public class MatchListTab extends Fragment {
                 }
 
                 for(int i = 0; i < fieldNameList.size(); i++) {
-                    matchListItems.add(new MatchListItem(matchIDList.get(i), fieldNameList.get(i), gameTimeList.get(i), gameDateList.get(i), teamAList.get(i),
-                            teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), isStarredList.get(i)));
+
+                    if(isLiveList.get(i) == true) {
+                        matchListItems.add(new MatchListItem(matchIDList.get(i), fieldNameList.get(i), gameTimeList.get(i), gameDateList.get(i), teamAList.get(i),
+                                teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), isStarredList.get(i)));
+                    }
+
                 }
 
                 adapter.notifyDataSetChanged();

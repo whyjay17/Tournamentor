@@ -16,8 +16,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
+
 import ykim164cs242.tournamentor.Adapter.SectionsPageAdapter;
+import ykim164cs242.tournamentor.Fragments.LiveMatchListTab;
 import ykim164cs242.tournamentor.Fragments.MatchListTab;
+import ykim164cs242.tournamentor.Fragments.StandingsTab;
+import ykim164cs242.tournamentor.Fragments.StarredMatchListTab;
+import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
 public class UserMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -29,10 +41,25 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
     ViewPager viewPager;
 
+    // Firebase Database Reference
+
+    DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference channelsReference = rootReference.child("Channels");
+
+    String passedDataFromChannelSelection;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_main);
+
+        try {
+            Intent intent = getIntent();
+            passedDataFromChannelSelection = intent.getStringExtra("tournamentName");
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -78,25 +105,67 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_select_channel) {
-            // Handle the camera action
+            // Handle the select_channel action
+
+            Intent channelIntent = new Intent(UserMainActivity.this, SelectChannelActivity.class);
+
+            startActivity(channelIntent);
 
         } else if (id == R.id.nav_team_list) {
+
             Intent teamListIntent = new Intent(UserMainActivity.this, TeamListActivity.class);
             startActivity(teamListIntent);
+
         } else if (id == R.id.nav_league_status) {
+
+            DatabaseReference competitionReference = channelsReference.child(passedDataFromChannelSelection + " Channel");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_league_info, null);
 
             //Define views inside the dialog layout
 
-            TextView textView = (TextView) dialogView.findViewById(R.id.textView16);
+            final TextView competitionName = (TextView) dialogView.findViewById(R.id.dialog_comp_name_placeholder);
+            final TextView term = (TextView) dialogView.findViewById(R.id.dialog_term_placeholder);
+            final TextView hostName = (TextView) dialogView.findViewById(R.id.dialog_host_placeholder);
+
+            competitionReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    competitionName.setText(dataSnapshot.child("Name").getValue().toString());
+                    term.setText(dataSnapshot.child("Term").getValue().toString());
+                    hostName.setText(dataSnapshot.child("Host").getValue().toString());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
             builder.setView(dialogView);
             AlertDialog dialog = builder.create();
             dialog.show();
 
-            //startActivity(new Intent(UserMainActivity.this, LeagueInfoPopUp.class));
+
+        } else if (id == R.id.nav_info) {
+
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_about_info, null);
+            builder.setView(dialogView);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        } else if (id == R.id.nav_faq) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_faq_info, null);
+            builder.setView(dialogView);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.nav_layout);
@@ -111,9 +180,9 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     private void setupViewPager(ViewPager viewPager) {
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new MatchListTab(), "Scores");
-        adapter.addFragment(new MatchListTab(), "Live");
-        adapter.addFragment(new MatchListTab(), "Favorite");
-        adapter.addFragment(new MatchListTab(), "Data");
+        adapter.addFragment(new LiveMatchListTab(), "Live");
+        adapter.addFragment(new StarredMatchListTab(), "Favorite");
+        adapter.addFragment(new StandingsTab(), "Data");
         viewPager.setAdapter(adapter);
     }
 

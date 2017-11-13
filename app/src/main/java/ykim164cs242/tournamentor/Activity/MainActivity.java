@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                Intent nextIntent = new Intent(MainActivity.this, UserMainActivity.class);
+                Intent nextIntent = new Intent(MainActivity.this, StartMenuActivity.class);
                 startActivity(nextIntent);
                 finish();
             }

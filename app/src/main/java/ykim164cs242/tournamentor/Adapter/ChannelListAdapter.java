@@ -6,35 +6,35 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ykim164cs242.tournamentor.R;
+import ykim164cs242.tournamentor.ListItem.ChannelListItem;
 import ykim164cs242.tournamentor.ListItem.TeamListItem;
+import ykim164cs242.tournamentor.R;
 
 /**
  * MatchListAdapter represents an Adapter that can be used in the ListView of matches.
  * It puts in the right data inside the activity_match_list_items.
  */
 
-public class TeamListAdapter extends BaseAdapter{
+public class ChannelListAdapter extends BaseAdapter{
 
     private Context context;
-    private List<TeamListItem> teamList;
+    private List<ChannelListItem> channelList;
 
-    public TeamListAdapter(Context context, List<TeamListItem> teamList) {
+    public ChannelListAdapter(Context context, List<ChannelListItem> channelList) {
         this.context = context;
-        this.teamList = teamList;
+        this.channelList = channelList;
     }
 
     @Override
     public int getCount() {
-        return teamList.size();
+        return channelList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return teamList.get(position);
+        return channelList.get(position);
     }
 
     @Override
@@ -51,17 +51,17 @@ public class TeamListAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View view = View.inflate(context, R.layout.activity_team_list_item, null);
+        View view = View.inflate(context, R.layout.activity_channel_list_item, null);
 
-        TextView teamName = (TextView) view.findViewById(R.id.team_name_item);
-        TextView foundationYear = (TextView) view.findViewById(R.id.team_foundation_year_item);
-        TextView captainName = (TextView) view.findViewById(R.id.team_captain_item);
+        TextView channelName = (TextView) view.findViewById(R.id.channel_name_item);
+        TextView competitionTerm = (TextView) view.findViewById(R.id.comp_term_item);
+        TextView hostOrganization = (TextView) view.findViewById(R.id.host_name_item);
 
         // Set Texts for TextViews
 
-        teamName.setText(teamList.get(position).getTeamName());
-        foundationYear.setText(teamList.get(position).getFoundationYear());
-        captainName.setText(teamList.get(position).getCaptainName());
+        channelName.setText(channelList.get(position).getChannelName());
+        competitionTerm.setText(channelList.get(position).getCompetitionTerm());
+        hostOrganization.setText(channelList.get(position).getHostOrganization());
         
         return view;
     }
