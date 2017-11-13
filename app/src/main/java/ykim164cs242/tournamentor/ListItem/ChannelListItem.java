@@ -1,9 +1,8 @@
 package ykim164cs242.tournamentor.ListItem;
 
 /**
- * MatchListItem class represents a component of the ListView in the Math List Page.
- * It contains the id (or index), fieldName, game time, live status (boolean), team names,
- * and scores for each team.
+ * ChannelListItem class represents a component of the ListView in the Channel List Page.
+ * It contains the id (or index), channelName, competitionTerm, hostOrganization names.
  */
 public class ChannelListItem {
 
@@ -12,6 +11,7 @@ public class ChannelListItem {
     private String competitionTerm;
     private String hostOrganization;
 
+    // Constructor
 
     public ChannelListItem(int id, String channelName, String competitionTerm, String hostOrganization) {
         this.id = id;
@@ -19,6 +19,8 @@ public class ChannelListItem {
         this.competitionTerm = competitionTerm;
         this.hostOrganization = hostOrganization;
     }
+
+    // Getters & Setters
 
     public int getId() {
         return id;

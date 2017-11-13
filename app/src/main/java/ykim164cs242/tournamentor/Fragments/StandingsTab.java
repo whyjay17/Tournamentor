@@ -16,6 +16,10 @@ import ykim164cs242.tournamentor.Adapter.MatchListAdapter;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
+/**
+ * StandingsTab contains two fragments that displays the league talbe and score table.
+ * To be implemented in Week 2.
+ */
 public class StandingsTab extends Fragment {
 
     ListView matchListView;
@@ -31,6 +35,8 @@ public class StandingsTab extends Fragment {
 
         StandingsFragment standingsFragment = new StandingsFragment();
         ScorerFragment scorerFragment = new ScorerFragment();
+
+        // Places two fragments
 
         FragmentManager topFragmentManager = getChildFragmentManager();
         topFragmentManager.beginTransaction()

@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import ykim164cs242.tournamentor.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for the scorer table. To be implemented in Week 2
  */
 public class ScorerFragment extends Fragment {
 
@@ -18,7 +18,6 @@ public class ScorerFragment extends Fragment {
     public ScorerFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

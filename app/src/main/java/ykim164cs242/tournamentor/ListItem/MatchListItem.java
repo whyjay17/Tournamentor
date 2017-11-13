@@ -18,6 +18,8 @@ public class MatchListItem {
     private boolean isLive;
     private boolean isStarred;
 
+    // Constructor
+
     public MatchListItem(String id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive, boolean isStarred) {
         this.id = id;
         this.fieldName = fieldName;
@@ -30,9 +32,6 @@ public class MatchListItem {
         this.isLive = isLive;
         this.isStarred = isStarred;
     }
-
-    // Constructor
-
 
     // Getters and Setters
 

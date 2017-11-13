@@ -36,8 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Competition Name"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Title"
             android:textColor="#FF5733"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +52,7 @@
             android:layout_height="wrap_content"
 
             android:text="Date"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintHorizontal_bias="0.343"
             app:layout_constraintLeft_toRightOf="@+id/comp_name"
             app:layout_constraintRight_toRightOf="parent"
@@ -95,7 +94,8 @@
 
             android:text="Team A"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textSize="30dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintTop_toBottomOf="@+id/comp_name"
             tools:layout_editor_absoluteX="102dp" />
 
@@ -105,11 +105,13 @@
             android:text="     " />
         <TextView
             android:id="@+id/score_a"
+            android:textSize="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Score A"
+
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintLeft_toRightOf="@+id/team_a"
             app:layout_constraintTop_toBottomOf="@+id/game_date" />
 
@@ -125,13 +127,14 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="FT"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textSize="30dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="    " />
+            android:text="                         " />
 
         <TextView
             android:id="@+id/textView6"
@@ -155,12 +158,12 @@
             android:id="@+id/textView17"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="        " />
+            android:text="                                    " />
 
         <ImageView
             android:id="@+id/starred"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
 
             app:srcCompat="@mipmap/ic_launcher" />
 
@@ -187,7 +190,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Team B"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textSize="30dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintTop_toBottomOf="@+id/team_a"
             android:textAlignment="center"
             tools:layout_editor_absoluteX="102dp" />
@@ -198,11 +202,12 @@
             android:text="    " />
         <TextView
             android:id="@+id/score_b"
+            android:textSize="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Score B"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintLeft_toRightOf="@+id/team_b"
             app:layout_constraintTop_toBottomOf="@+id/score_a" />
     </TableRow>
@@ -211,9 +216,7 @@
         android:id="@+id/live_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:text="LIVE"
-        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintHorizontal_bias="0.941"
         app:layout_constraintLeft_toLeftOf="parent"

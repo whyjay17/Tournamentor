@@ -32,6 +32,12 @@ import ykim164cs242.tournamentor.Fragments.StarredMatchListTab;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
+/**
+ * The UserMainActivity class represents the main User Interface that utilizes both TabLayout and NavigationDrawer.
+ * It handles the select listeners for each item of the NavigationDrawer, and adds fragment tabs into the TabLayout
+ * so that the user can move to different tabs with different views.
+ */
+
 public class UserMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private DrawerLayout mDrawerLayout;
@@ -46,6 +52,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference channelsReference = rootReference.child("Channels");
 
+    // Passed-in data from the SelectChannel Activity. Will be used to reach the right database reference
+
     String passedDataFromChannelSelection;
 
     @Override
@@ -53,6 +61,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_main);
 
+        // Receiving data from the SelectChannel Activity
         try {
             Intent intent = getIntent();
             passedDataFromChannelSelection = intent.getStringExtra("tournamentName");
@@ -61,14 +70,16 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             e.printStackTrace();
         }
 
+        // Fragment Manager for TabLayout
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, new MatchListTab());
 
+        // Handles NavigationDrawer
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_layout);
-
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
 
@@ -76,6 +87,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Sets up ViewPager so that it can display different tab fragments
 
         pageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
@@ -85,9 +98,11 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager((viewPager));
 
-
     }
 
+    /**
+     * Handles item selection option for each item in the NavigationDrawer
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -105,29 +120,35 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_select_channel) {
-            // Handle the select_channel action
+
+            // Handle the select_channel action: Moves to SelectChannelActivity
 
             Intent channelIntent = new Intent(UserMainActivity.this, SelectChannelActivity.class);
-
             startActivity(channelIntent);
 
         } else if (id == R.id.nav_team_list) {
+
+            // Handle the nav_team_list action: Moves to TeamListActivity
 
             Intent teamListIntent = new Intent(UserMainActivity.this, TeamListActivity.class);
             startActivity(teamListIntent);
 
         } else if (id == R.id.nav_league_status) {
 
+            // Handle the nav_league_status action: Displays dialog that contains fetched league information from the real-time database
+
             DatabaseReference competitionReference = channelsReference.child(passedDataFromChannelSelection + " Channel");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_league_info, null);
 
-            //Define views inside the dialog layout
+            // Define views inside the dialog layout
 
             final TextView competitionName = (TextView) dialogView.findViewById(R.id.dialog_comp_name_placeholder);
             final TextView term = (TextView) dialogView.findViewById(R.id.dialog_term_placeholder);
             final TextView hostName = (TextView) dialogView.findViewById(R.id.dialog_host_placeholder);
+
+            // Fetching data from the real-time database
 
             competitionReference.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -151,6 +172,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
         } else if (id == R.id.nav_info) {
 
+            // Handle the nav_info action: Displays dialog that contains the information about the app
 
             AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_about_info, null);
@@ -159,6 +181,8 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
             dialog.show();
 
         } else if (id == R.id.nav_faq) {
+
+            // Handle the nav_faq action: Displays dialog that contains the information about the FAQ
 
             AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_faq_info, null);

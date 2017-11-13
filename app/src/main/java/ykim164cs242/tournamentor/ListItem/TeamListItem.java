@@ -1,9 +1,8 @@
 package ykim164cs242.tournamentor.ListItem;
 
 /**
- * MatchListItem class represents a component of the ListView in the Math List Page.
- * It contains the id (or index), fieldName, game time, live status (boolean), team names,
- * and scores for each team.
+ * TeamListItem class represents a component of the ListView in the Team List Page.
+ * It contains the id (or index), teamName, foundationYear, and the captainName.
  */
 public class TeamListItem {
 
@@ -12,12 +11,16 @@ public class TeamListItem {
     private String foundationYear;
     private String captainName;
 
+    // Constructor
+
     public TeamListItem(int id, String teamName, String foundationYear, String captainName) {
         this.id = id;
         this.teamName = teamName;
         this.foundationYear = foundationYear;
         this.captainName = captainName;
     }
+
+    // Getters & Setters
 
     public int getId() {
         return id;

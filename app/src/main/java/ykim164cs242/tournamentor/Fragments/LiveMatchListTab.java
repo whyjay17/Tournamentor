@@ -21,15 +21,19 @@ import ykim164cs242.tournamentor.Adapter.MatchListAdapter;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
+/**
+ * The LiveMatchListTab class represents the tab fragment that displays the LIVE match list.
+ * It only fetches the data with "isLive = true" from the Firebase real-time database
+ * and displays it in the ListView.
+ */
 public class LiveMatchListTab extends Fragment {
-
 
     ListView matchListView;
 
     private MatchListAdapter adapter;
     private List<MatchListItem> matchListItems;
 
-    // Storages for parsed JSON data (repoName, userName, description of repositories)
+    // Storages for parsed data
     private List<String> matchIDList;
     private List<String> fieldNameList;
     private List<String> gameTimeList;
@@ -71,6 +75,11 @@ public class LiveMatchListTab extends Fragment {
 
     }
 
+    /**
+     * Fetches the data from the real-time database, stores into the pre-initialized storages,
+     * and displays in the ListView. The onDataChange function runs everytime the data is
+     * changed in the real-time database.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -85,6 +94,7 @@ public class LiveMatchListTab extends Fragment {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     matchListItems.clear();
 
+                    // ID Format: Date + TeamA + vs + TeamB
                     matchIDList.add(snapshot.child("gameDate").getValue().toString() + " "
                             + snapshot.child("teamA").getValue().toString()
                             + " vs " + snapshot.child("teamB").getValue().toString());
@@ -102,6 +112,7 @@ public class LiveMatchListTab extends Fragment {
 
                 for(int i = 0; i < fieldNameList.size(); i++) {
 
+                    // Fetches ONLY the match with "isLive = true"
                     if(isLiveList.get(i) == true) {
                         matchListItems.add(new MatchListItem(matchIDList.get(i), fieldNameList.get(i), gameTimeList.get(i), gameDateList.get(i), teamAList.get(i),
                                 teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), isStarredList.get(i)));
@@ -120,6 +131,9 @@ public class LiveMatchListTab extends Fragment {
         });
     }
 
+    /**
+     * clearCurrentList clears items inside the data storage for data-redrawing
+     */
     public void clearCurrentList() {
 
         matchIDList.clear();

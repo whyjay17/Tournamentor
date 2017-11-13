@@ -21,6 +21,11 @@ import ykim164cs242.tournamentor.Adapter.MatchListAdapter;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
+/**
+ * The StarredMatchListTab class represents the tab fragment that displays the STARRED match list.
+ * It only fetches the data with "isStarred = true" from the Firebase real-time database
+ * and displays it in the ListView.
+ */
 public class StarredMatchListTab extends Fragment {
 
     ListView matchListView;
@@ -28,7 +33,7 @@ public class StarredMatchListTab extends Fragment {
     private MatchListAdapter adapter;
     private List<MatchListItem> matchListItems;
 
-    // Storages for parsed JSON data (repoName, userName, description of repositories)
+    // Storages for parsed data from the database
     private List<String> matchIDList;
     private List<String> fieldNameList;
     private List<String> gameTimeList;
@@ -70,6 +75,11 @@ public class StarredMatchListTab extends Fragment {
 
     }
 
+    /**
+     * Fetches the data from the real-time database, stores into the pre-initialized storages,
+     * and displays in the ListView. The onDataChange function runs everytime the data is
+     * changed in the real-time database.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -84,6 +94,7 @@ public class StarredMatchListTab extends Fragment {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     matchListItems.clear();
 
+                    // ID Format: Date + TeamA + vs + TeamB
                     matchIDList.add(snapshot.child("gameDate").getValue().toString() + " "
                             + snapshot.child("teamA").getValue().toString()
                             + " vs " + snapshot.child("teamB").getValue().toString());
@@ -101,15 +112,14 @@ public class StarredMatchListTab extends Fragment {
 
                 for(int i = 0; i < fieldNameList.size(); i++) {
 
+                    // Fetches ONLY the match with "isStarred = true"
                     if(isStarredList.get(i) == true) {
                         matchListItems.add(new MatchListItem(matchIDList.get(i), fieldNameList.get(i), gameTimeList.get(i), gameDateList.get(i), teamAList.get(i),
                                 teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), isStarredList.get(i)));
                     }
 
                 }
-
                 adapter.notifyDataSetChanged();
-
             }
 
             @Override
@@ -119,6 +129,9 @@ public class StarredMatchListTab extends Fragment {
         });
     }
 
+    /**
+     * clearCurrentList clears items inside the data storage for data-redrawing
+     */
     public void clearCurrentList() {
 
         matchIDList.clear();

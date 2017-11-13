@@ -22,6 +22,12 @@ import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.Adapter.MatchListAdapter;
 import ykim164cs242.tournamentor.R;
 
+/**
+ * The MatchListTab class represents the tab fragment that displays the match list.
+ * It fetches the data from the Firebase real-time database and displays it in the
+ * ListView.
+ */
+
 public class MatchListTab extends Fragment {
 
     ListView matchListView;
@@ -41,6 +47,7 @@ public class MatchListTab extends Fragment {
     private List<Boolean> isLiveList;
     private List<Boolean> isStarredList;
 
+    // Firebase database reference
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference tournamentReference = rootReference.child("Tournaments");
     DatabaseReference matchReference = tournamentReference.child("Test Tournament").child("Matches");
@@ -67,21 +74,15 @@ public class MatchListTab extends Fragment {
         adapter = new MatchListAdapter(getContext(), matchListItems);
         matchListView.setAdapter(adapter);
 
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("id").setValue("Nov 13, 2017 Team Eagles vs Team Tigers");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("fieldName").setValue("UIUC Sixpack Field A");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("gameTime").setValue("FT");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("gameDate").setValue("Nov 13, 2017");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("teamA").setValue("Team Eagles");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("teamB").setValue("Team Tigers");
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("scoreA").setValue(0);
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("scoreB").setValue(3);
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("isLive").setValue(false);
-      //tournamentReference.child("Test Tournament").child("Matches").child("Nov 13, 2017 Team Eagles vs Team Tigers").child("isStarred").setValue(false);
-
         return view;
 
     }
 
+    /**
+     * Fetches the data from the real-time database, stores into the pre-initialized storages,
+     * and displays in the ListView. The onDataChange function runs everytime the data is
+     * changed in the real-time database.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -96,6 +97,7 @@ public class MatchListTab extends Fragment {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     matchListItems.clear();
 
+                    // ID Format: Date + TeamA + vs + TeamB
                     matchIDList.add(snapshot.child("gameDate").getValue().toString() + " "
                             + snapshot.child("teamA").getValue().toString()
                     + " vs " + snapshot.child("teamB").getValue().toString());
@@ -127,6 +129,9 @@ public class MatchListTab extends Fragment {
         });
     }
 
+    /**
+     * clearCurrentList clears items inside the data storage for data-redrawing
+     */
     public void clearCurrentList() {
 
         matchIDList.clear();

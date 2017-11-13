@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import ykim164cs242.tournamentor.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment for the league table. To be implemented in Week 2
  */
 public class StandingsFragment extends Fragment {
 

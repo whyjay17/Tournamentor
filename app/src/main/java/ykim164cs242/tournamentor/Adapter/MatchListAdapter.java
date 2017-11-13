@@ -107,14 +107,20 @@ public class MatchListAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 if(matchList.get(position).isStarred()) {
+
+                    // when the Colored star is clicked, change color back to white and set the "Starred" value to false in both data and real-time database
+
                     matchList.get(position).setStarred(false);
                     matchReference.setValue(false);
-                    starred.setColorFilter(Color.argb(255, 255, 255, 255));
+                    starred.setColorFilter(Color.argb(255, 255, 255, 255)); // White
                 }
                 else {
+
+                    // when the unColored star is clicked, change color to yellow and set the "Starred" value to true in both data and real-time database
+
                     matchList.get(position).setStarred(true);
                     matchReference.setValue(true);
-                    starred.setColorFilter(Color.argb(255, 255, 214, 51));
+                    starred.setColorFilter(Color.argb(255, 255, 214, 51)); // Yellow
                 }
             }
         });

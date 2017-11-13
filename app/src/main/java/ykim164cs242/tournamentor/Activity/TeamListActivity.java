@@ -19,6 +19,11 @@ import ykim164cs242.tournamentor.ListItem.ChannelListItem;
 import ykim164cs242.tournamentor.R;
 import ykim164cs242.tournamentor.ListItem.TeamListItem;
 
+/**
+ * TeamListActivity represents a screen of displaying participating teams of the tournament.
+ * The team information is fetched from the Firebase real-time database and displayed
+ * in the ListView of the teams.
+ */
 public class TeamListActivity extends AppCompatActivity {
 
     ListView teamListView;
@@ -26,11 +31,12 @@ public class TeamListActivity extends AppCompatActivity {
     private TeamListAdapter adapter;
     private List<TeamListItem> teamListItems;
 
-    // Storages for parsed JSON data (repoName, userName, description of repositories)
+    // Storages for parsed data from the real-time database
     private List<String> teamNameList;
     private List<String> foundationYearList;
     private List<String> captainNameList;
 
+    // Firebase Database references.
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference tournamentReference = rootReference.child("Tournaments");
     DatabaseReference teamReference = tournamentReference.child("Test Tournament").child("Teams");
@@ -52,6 +58,11 @@ public class TeamListActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Fetches the data from the real-time database, stores into the pre-initialized storages,
+     * and displays in the ListView. The onDataChange function runs everytime the data is
+     * changed in the real-time database.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -60,6 +71,7 @@ public class TeamListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                // Clear the storages for redrawing of the ListView
                 teamNameList.clear();
                 foundationYearList.clear();
                 captainNameList.clear();

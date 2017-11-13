@@ -22,6 +22,12 @@ import ykim164cs242.tournamentor.ListItem.ChannelListItem;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
+/**
+ * SelectChannelActivity represents a screen of selecting existing tournament channels.
+ * The channel information is fetched from the Firebase real-time database and
+ * displayed in the ListView of the channel.
+ */
+
 public class SelectChannelActivity extends AppCompatActivity {
 
     ListView channelListView;
@@ -29,7 +35,7 @@ public class SelectChannelActivity extends AppCompatActivity {
     private ChannelListAdapter adapter;
     private List<ChannelListItem> channelListItems;
 
-    // Storages for parsed JSON data (repoName, userName, description of repositories)
+    // Storages for parsed data from the real-time database
     private List<String> channelNameList;
     private List<String> termList;
     private List<String> hostList;
@@ -53,6 +59,8 @@ public class SelectChannelActivity extends AppCompatActivity {
         adapter = new ChannelListAdapter(this, channelListItems);
         channelListView.setAdapter(adapter);
 
+        // onClickHandler for each list item. It moves to the corresponding channel passing the tournamentName data to the next activity
+
         channelListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -68,6 +76,11 @@ public class SelectChannelActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Fetches the data from the real-time database, stores into the pre-initialized storages,
+     * and displays in the ListView. The onDataChange function runs everytime the data is
+     * changed in the real-time database.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -76,6 +89,7 @@ public class SelectChannelActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                // Clear the storages for redrawing of the ListView
                 channelNameList.clear();
                 termList.clear();
                 hostList.clear();

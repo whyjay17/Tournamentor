@@ -8,6 +8,13 @@ import android.widget.Button;
 
 import ykim164cs242.tournamentor.R;
 
+/**
+ * StartMenuActivity represents a screen of selecting the mode of the application.
+ * It lets the user to choose either the Admin Mode: Mode for setting up channels for
+ * tournaments and managing them or the Join Channel Mode: Mode for joining tournament
+ * channel as a participant of the tournament.
+ */
+
 public class StartMenuActivity extends AppCompatActivity {
 
     Button joinChannelButton;
@@ -18,6 +25,8 @@ public class StartMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start_menu);
 
         joinChannelButton = (Button) findViewById(R.id.join_channel_button);
+
+        // Moves to the Channel Selection Screen
 
         joinChannelButton.setOnClickListener(new View.OnClickListener() {
             @Override
