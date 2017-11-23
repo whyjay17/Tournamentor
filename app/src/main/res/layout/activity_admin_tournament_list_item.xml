@@ -14,7 +14,7 @@
         android:layout_marginTop="20dp">
 
         <TextView
-            android:id="@+id/channel_name_text"
+            android:id="@+id/tournament_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -25,12 +25,12 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <TextView
-            android:id="@+id/channel_name_item"
+            android:id="@+id/tournament_name_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="channelName"
             android:gravity="left"
+            android:text="tournamentName"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </TableRow>
 
@@ -42,23 +42,23 @@
         android:layout_marginTop="20dp">
 
         <TextView
-            android:id="@+id/comp_term_text"
+            android:id="@+id/tournament_term_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="left"
-            android:text="Created Date"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:text="Term"
+            android:textStyle="bold"
             android:textColor="#FF5733"
-            android:textStyle="bold" />
+            android:gravity="left"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <TextView
-            android:id="@+id/comp_term_item"
+            android:id="@+id/tournament_term_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:text="TextView"
             android:gravity="left"
-            android:text="createdDate"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </TableRow>
 

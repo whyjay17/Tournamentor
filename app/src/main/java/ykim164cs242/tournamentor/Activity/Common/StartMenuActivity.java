@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Activity;
+package ykim164cs242.tournamentor.Activity.Common;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import ykim164cs242.tournamentor.Activity.Client.SelectChannelActivity;
 import ykim164cs242.tournamentor.R;
 
 /**

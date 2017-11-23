@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ykim164cs242.tournamentor.Activity.StartMenuActivity">
+    tools:context="ykim164cs242.tournamentor.Activity.Common.StartMenuActivity">
 
     <TextView
         android:id="@+id/textView"

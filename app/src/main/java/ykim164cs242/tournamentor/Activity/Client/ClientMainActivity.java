@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Activity;
+package ykim164cs242.tournamentor.Activity.Client;
 
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
@@ -22,23 +22,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import ykim164cs242.tournamentor.Adapter.SectionsPageAdapter;
-import ykim164cs242.tournamentor.Fragments.LiveMatchListTab;
-import ykim164cs242.tournamentor.Fragments.MatchListTab;
-import ykim164cs242.tournamentor.Fragments.StandingsTab;
-import ykim164cs242.tournamentor.Fragments.StarredMatchListTab;
-import ykim164cs242.tournamentor.ListItem.MatchListItem;
+import ykim164cs242.tournamentor.Fragments.Client.LiveMatchListTab;
+import ykim164cs242.tournamentor.Fragments.Client.MatchListTab;
+import ykim164cs242.tournamentor.Fragments.Client.StandingsTab;
+import ykim164cs242.tournamentor.Fragments.Client.StarredMatchListTab;
 import ykim164cs242.tournamentor.R;
 
 /**
- * The UserMainActivity class represents the main User Interface that utilizes both TabLayout and NavigationDrawer.
+ * The ClientMainActivity class represents the main User Interface that utilizes both TabLayout and NavigationDrawer.
  * It handles the select listeners for each item of the NavigationDrawer, and adds fragment tabs into the TabLayout
  * so that the user can move to different tabs with different views.
  */
 
-public class UserMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class ClientMainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
@@ -123,14 +120,14 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
             // Handle the select_channel action: Moves to SelectChannelActivity
 
-            Intent channelIntent = new Intent(UserMainActivity.this, SelectChannelActivity.class);
+            Intent channelIntent = new Intent(ClientMainActivity.this, SelectChannelActivity.class);
             startActivity(channelIntent);
 
         } else if (id == R.id.nav_team_list) {
 
             // Handle the nav_team_list action: Moves to TeamListActivity
 
-            Intent teamListIntent = new Intent(UserMainActivity.this, TeamListActivity.class);
+            Intent teamListIntent = new Intent(ClientMainActivity.this, TeamListActivity.class);
             startActivity(teamListIntent);
 
         } else if (id == R.id.nav_league_status) {
@@ -139,7 +136,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
             DatabaseReference competitionReference = channelsReference.child(passedDataFromChannelSelection + " Channel");
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ClientMainActivity.this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_league_info, null);
 
             // Define views inside the dialog layout
@@ -174,7 +171,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
             // Handle the nav_info action: Displays dialog that contains the information about the app
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ClientMainActivity.this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_about_info, null);
             builder.setView(dialogView);
             AlertDialog dialog = builder.create();
@@ -184,7 +181,7 @@ public class UserMainActivity extends AppCompatActivity implements NavigationVie
 
             // Handle the nav_faq action: Displays dialog that contains the information about the FAQ
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(UserMainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ClientMainActivity.this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_faq_info, null);
             builder.setView(dialogView);
             AlertDialog dialog = builder.create();

@@ -1,21 +1,18 @@
-package ykim164cs242.tournamentor.Adapter;
+package ykim164cs242.tournamentor.Adapter.Client;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
-import ykim164cs242.tournamentor.Activity.UserMainActivity;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 

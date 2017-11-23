@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/add_team_dialog_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:text="Add a Team"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#FF5733" />
+
+    <EditText
+        android:id="@+id/input_team_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_team_dialog_header"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp"
+        android:ems="10"
+        android:hint="Team Name"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/input_foundation_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/input_team_name"
+        android:layout_alignStart="@+id/input_team_name"
+        android:layout_below="@+id/input_team_name"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="Foundation Year"
+        android:inputType="date" />
+
+    <EditText
+        android:id="@+id/input_captain_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/input_foundation_year"
+        android:layout_alignStart="@+id/input_foundation_year"
+        android:layout_below="@+id/input_foundation_year"
+        android:layout_marginTop="11dp"
+        android:ems="10"
+        android:hint="Captain Name"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/add_team_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="submit"
+        android:layout_below="@+id/input_captain_name"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

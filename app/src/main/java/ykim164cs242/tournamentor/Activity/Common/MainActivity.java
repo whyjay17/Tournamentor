@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Activity;
+package ykim164cs242.tournamentor.Activity.Common;
 
 import android.content.Intent;
 import android.os.Handler;

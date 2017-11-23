@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Adapter;
+package ykim164cs242.tournamentor.Adapter.Client;
 
 import android.content.Context;
 import android.view.View;

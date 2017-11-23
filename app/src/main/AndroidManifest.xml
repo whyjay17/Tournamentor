@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ykim164cs242.tournamentor">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,27 +11,48 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/TournamentorTheme">
-        <activity android:name=".Activity.MainActivity">
+        <activity android:name=".Activity.Common.MainActivity">
+
+        </activity>
+        <activity android:name=".Activity.Common.StartMenuActivity" />
+        <activity android:name=".ListItem.MatchListItem" />
+        <activity
+            android:name=".Activity.Client.ClientMainActivity"
+            android:theme="@style/TournamentorThemeWithActionBar" />
+        <activity android:name=".Fragments.Client.MatchListTab" />
+        <activity android:name=".Activity.Client.TeamListActivity" />
+        <activity
+            android:name=".LeagueInfoPopUp"
+            android:theme="@style/AppTheme.popUpTheme" />
+        <activity android:name=".Activity.StandingsActivity" />
+        <activity android:name=".Activity.Client.SelectChannelActivity" />
+        <activity android:name=".Activity.Client.ClientTournamentListActivity" />
+        <activity android:name=".Activity.Admin.AdminLoginActivity">
+
+        </activity>
+        <activity android:name=".Activity.Admin.AdminAddTournamentActivity">
+
+        </activity>
+
+        <activity android:name=".Activity.Admin.AdminAddTournamentAddTeamActivity">
+
+        </activity>
+        <activity android:name=".Activity.Admin.AddNewAdminActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.StartMenuActivity" />
-        <activity android:name=".ListItem.MatchListItem" />
-        <activity
-            android:name=".Activity.UserMainActivity"
-            android:theme="@style/TournamentorThemeWithActionBar">
+        <activity android:name=".Activity.Admin.AdminTournamentListActivity">
 
         </activity>
-        <activity android:name=".Fragments.MatchListTab" />
-        <activity android:name=".Activity.TeamListActivity" />
-        <activity
-            android:name=".LeagueInfoPopUp"
-            android:theme="@style/AppTheme.popUpTheme" />
-        <activity android:name=".Activity.StandingsActivity" />
-        <activity android:name=".Activity.SelectChannelActivity"></activity>
+        <activity android:name=".Activity.Admin.AdminTournamentMenuActivity">
+
+        </activity>
+        <activity android:name=".Activity.Admin.AdminMatchListActivity">
+
+        </activity>
     </application>
 
 </manifest>

@@ -5,21 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="ykim164cs242.tournamentor.Activity.Client.TeamListActivity">
+    tools:context="ykim164cs242.tournamentor.Activity.Client.TeamListActivity"
+    android:weightSum="1">
 
     <TextView
-        android:id="@+id/team_list_header"
+        android:id="@+id/select_tournament_list_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:text="Participating Teams"
+        android:layout_marginTop="10dp"
+        android:text="Select Tournament"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#FF5733" />
 
     <ListView
-        android:id="@+id/team_listview"
+        android:id="@+id/select_tournament_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

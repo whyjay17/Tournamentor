@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Fragments;
+package ykim164cs242.tournamentor.Fragments.Client;
 
 
 import android.os.Bundle;

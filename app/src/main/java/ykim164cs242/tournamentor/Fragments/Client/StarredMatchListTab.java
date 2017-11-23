@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Fragments;
+package ykim164cs242.tournamentor.Fragments.Client;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,7 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import ykim164cs242.tournamentor.Adapter.MatchListAdapter;
+import ykim164cs242.tournamentor.Adapter.Client.MatchListAdapter;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 

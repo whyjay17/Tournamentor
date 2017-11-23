@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Fragments;
+package ykim164cs242.tournamentor.Fragments.Client;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,10 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ykim164cs242.tournamentor.Adapter.MatchListAdapter;
+import ykim164cs242.tournamentor.Adapter.Client.MatchListAdapter;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 

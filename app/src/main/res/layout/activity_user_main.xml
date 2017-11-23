@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ykim164cs242.tournamentor.Activity.UserMainActivity"
+    tools:context="ykim164cs242.tournamentor.Activity.Client.ClientMainActivity"
     android:id="@+id/nav_layout">
 
 

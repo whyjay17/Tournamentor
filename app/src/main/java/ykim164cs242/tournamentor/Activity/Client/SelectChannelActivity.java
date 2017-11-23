@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Activity;
+package ykim164cs242.tournamentor.Activity.Client;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,20 +6,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
+import android.provider.Settings.Secure;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import ykim164cs242.tournamentor.Adapter.ChannelListAdapter;
-import ykim164cs242.tournamentor.Adapter.MatchListAdapter;
+import ykim164cs242.tournamentor.Adapter.Client.ChannelListAdapter;
+import ykim164cs242.tournamentor.InformationStorage.ClientUserInfo;
+import ykim164cs242.tournamentor.InformationStorage.GameInfo;
+import ykim164cs242.tournamentor.InformationStorage.TournamentInfo;
 import ykim164cs242.tournamentor.ListItem.ChannelListItem;
-import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.R;
 
 /**
@@ -36,12 +40,11 @@ public class SelectChannelActivity extends AppCompatActivity {
     private List<ChannelListItem> channelListItems;
 
     // Storages for parsed data from the real-time database
+    private List<String> channelIDList;
     private List<String> channelNameList;
     private List<String> termList;
-    private List<String> hostList;
 
     // Realtime database reference
-
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference channelReference = rootReference.child("Channels");
 
@@ -50,11 +53,15 @@ public class SelectChannelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_channel);
 
+        String deviceID = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
+
+        addUserToDB(deviceID);
+
         channelListView = (ListView) findViewById(R.id.channel_listview);
+        channelIDList = new ArrayList<>();
         channelListItems = new ArrayList<>();
         channelNameList = new ArrayList<>();
         termList = new ArrayList<>();
-        hostList = new ArrayList<>();
 
         adapter = new ChannelListAdapter(this, channelListItems);
         channelListView.setAdapter(adapter);
@@ -65,11 +72,11 @@ public class SelectChannelActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent intent = new Intent(SelectChannelActivity.this, UserMainActivity.class);
-                String key = channelNameList.get(position);
-                intent.putExtra("tournamentName", key);
+               Intent intent = new Intent(SelectChannelActivity.this, ClientTournamentListActivity.class);
+               String key = channelIDList.get(position);
+               intent.putExtra("channelID", key);
 
-                startActivity(intent);
+               startActivity(intent);
 
             }
         });
@@ -92,18 +99,17 @@ public class SelectChannelActivity extends AppCompatActivity {
                 // Clear the storages for redrawing of the ListView
                 channelNameList.clear();
                 termList.clear();
-                hostList.clear();
 
                 // Fires every single time the channelReference updates in the Real-time DB
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     channelListItems.clear();
-                    channelNameList.add(snapshot.child("Name").getValue().toString());
-                    termList.add(snapshot.child("Term").getValue().toString());
-                    hostList.add(snapshot.child("Host").getValue().toString());
+                    channelIDList.add(snapshot.getKey());
+                    channelNameList.add(snapshot.child("name").getValue().toString());
+                    termList.add(snapshot.child("term").getValue().toString());
                 }
 
                 for(int i = 0; i < channelNameList.size(); i++) {
-                    channelListItems.add(new ChannelListItem(i, channelNameList.get(i), termList.get(i), hostList.get(i)));
+                    channelListItems.add(new ChannelListItem(channelIDList.get(i), channelNameList.get(i), termList.get(i)));
                 }
 
                 adapter.notifyDataSetChanged();
@@ -115,5 +121,12 @@ public class SelectChannelActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void addUserToDB(String deviceID) {
+
+        final ClientUserInfo clientUserInfo =  new ClientUserInfo(deviceID, null);
+        rootReference.child("Users").child(deviceID).setValue(clientUserInfo);
+
     }
 }

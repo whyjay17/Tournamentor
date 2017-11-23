@@ -1,32 +1,28 @@
 package ykim164cs242.tournamentor.ListItem;
 
+import java.util.Date;
+
 /**
  * ChannelListItem class represents a component of the ListView in the Channel List Page.
  * It contains the id (or index), channelName, competitionTerm, hostOrganization names.
  */
 public class ChannelListItem {
 
-    private int id;
+    private String id;
     private String channelName;
-    private String competitionTerm;
-    private String hostOrganization;
+    private String createdDate;
 
-    // Constructor
-
-    public ChannelListItem(int id, String channelName, String competitionTerm, String hostOrganization) {
+    public ChannelListItem(String id, String channelName, String createdDate) {
         this.id = id;
         this.channelName = channelName;
-        this.competitionTerm = competitionTerm;
-        this.hostOrganization = hostOrganization;
+        this.createdDate = createdDate;
     }
 
-    // Getters & Setters
-
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -38,19 +34,11 @@ public class ChannelListItem {
         this.channelName = channelName;
     }
 
-    public String getCompetitionTerm() {
-        return competitionTerm;
+    public String getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCompetitionTerm(String competitionTerm) {
-        this.competitionTerm = competitionTerm;
-    }
-
-    public String getHostOrganization() {
-        return hostOrganization;
-    }
-
-    public void setHostOrganization(String hostOrganization) {
-        this.hostOrganization = hostOrganization;
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 }

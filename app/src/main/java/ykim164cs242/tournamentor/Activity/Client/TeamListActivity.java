@@ -1,4 +1,4 @@
-package ykim164cs242.tournamentor.Activity;
+package ykim164cs242.tournamentor.Activity.Client;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,9 +13,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import ykim164cs242.tournamentor.Adapter.ChannelListAdapter;
-import ykim164cs242.tournamentor.Adapter.TeamListAdapter;
-import ykim164cs242.tournamentor.ListItem.ChannelListItem;
+import ykim164cs242.tournamentor.Adapter.Client.TeamListAdapter;
 import ykim164cs242.tournamentor.R;
 import ykim164cs242.tournamentor.ListItem.TeamListItem;
 
