@@ -26,9 +26,9 @@ import ykim164cs242.tournamentor.InformationStorage.TournamentInfo;
 import ykim164cs242.tournamentor.R;
 
 /**
- * TeamListActivity represents a screen of displaying participating teams of the tournament.
- * The team information is fetched from the Firebase real-time database and displayed
- * in the ListView of the teams.
+ * AdminAddTournamentActivity represents a screen where the Admin can add a new
+ * tournament in the channel. Based on the final setting, it updates
+ * the Firebase database. It requires tournamentName and term.
  */
 public class AdminAddTournamentActivity extends AppCompatActivity {
 
@@ -41,6 +41,8 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
 
     private Button nextButton;
     private String channelID;
+    private String tournamentName;
+
 
     private String startDate;
     private String endDate;
@@ -56,12 +58,15 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_new_tournament);
         nextButton = (Button) findViewById(R.id.next_button);
         inputName = (EditText) findViewById(R.id.add_tournament_name);
+
         // passed in data
 
-        // Receiving data from the SelectChannel Activity
         try {
             Intent intent = getIntent();
+            startDate = intent.getStringExtra("startDate");
+            endDate = intent.getStringExtra("endDate");
             channelID = intent.getStringExtra("channelID");
+            tournamentName = intent.getStringExtra("tournamentName");
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -72,6 +77,9 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
         startDateTextView = (TextView) findViewById(R.id.start_date);
         endDateTextView = (TextView) findViewById(R.id.end_date);
 
+        inputName.setText(tournamentName);
+
+        // Start Date selector dialog
         startDateTextView.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -87,7 +95,7 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
             }
         });
 
-
+        // End Date selector dialog
         endDateTextView.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -108,7 +116,7 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month += 1;
-                String date = month + "/" + dayOfMonth + "/" + year;
+                String date = month + "-" + dayOfMonth + "-" + year;
                 startDateTextView.setText(date);
                 startDate = date;
             }
@@ -119,7 +127,7 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month += 1;
-                String date = month + "/" + dayOfMonth + "/" + year;
+                String date = month + "-" + dayOfMonth + "-" + year;
                 endDateTextView.setText(date);
                 endDate = date;
             }
@@ -128,16 +136,21 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Add tournament dialog
 
                 Intent addTeamIntent = new Intent(AdminAddTournamentActivity.this, AdminAddTournamentAddTeamActivity.class);
 
                 String nametoPass = inputName.getText().toString();
                 String datetoPass = startDate + " ~ " + endDate;
+                addTeamIntent.putExtra("startDate", startDate);
+                addTeamIntent.putExtra("endDate", endDate);
                 addTeamIntent.putExtra("inputName", nametoPass);
                 addTeamIntent.putExtra("inputDate", datetoPass);
+
                 TournamentInfo tempTournament = new TournamentInfo(nametoPass, datetoPass, null, null);
                 rootReference.child("Channels").child(firebaseUser.getUid()).child("tournaments").child(nametoPass).setValue(tempTournament);
+
+                // Adds the tournament info to the DB and moves to the team add screen
+
                 startActivity(addTeamIntent);
 
             }

@@ -8,12 +8,21 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import ykim164cs242.tournamentor.Activity.Client.ClientMainActivity;
+import ykim164cs242.tournamentor.InformationStorage.ClientUserInfo;
+import ykim164cs242.tournamentor.InformationStorage.GameInfo;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
+import ykim164cs242.tournamentor.ListItem.TournamentListItem;
 import ykim164cs242.tournamentor.R;
 
 /**
@@ -24,10 +33,19 @@ import ykim164cs242.tournamentor.R;
 public class MatchListAdapter extends BaseAdapter{
 
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference tournamentReference = rootReference.child("Tournaments");
-
+    DatabaseReference matchReference;
+    DatabaseReference userReference;
     private Context context;
     private List<MatchListItem> matchList;
+
+    Boolean isStarred;
+
+    String deviceID = ClientMainActivity.passedInDeviceID;
+    String channelID = ClientMainActivity.passedInChannelID;
+    String tournamentName = ClientMainActivity.passedInTournamentName;
+    String gameID;
+
+    List<String> starredGameList;
 
     public MatchListAdapter(Context context, List<MatchListItem> matchList) {
         this.context = context;
@@ -82,9 +100,13 @@ public class MatchListAdapter extends BaseAdapter{
         scoreA.setText(Integer.toString(matchList.get(position).getScoreA()));
         scoreB.setText(Integer.toString(matchList.get(position).getScoreB()));
 
-        final DatabaseReference matchReference = tournamentReference.child("Test Tournament").child("Matches").child(matchList.get(position).getGameDate() + " "
-                + matchList.get(position).getTeamA() + " vs "
-        + matchList.get(position).getTeamB()).child("isStarred");
+        // dummy data for refreshing the real-time DB
+
+        matchReference = rootReference.child("Channels").child(channelID).child("tournaments")
+                .child(tournamentName).child("games").child(matchList.get(position).getId()).child("dummy");
+
+        // needs unique device ID to personalize 'starred' games
+        userReference = rootReference.child("Users").child(deviceID).child("starredGames");
 
         // Live Status : Blink effect if game is live
 
@@ -96,9 +118,12 @@ public class MatchListAdapter extends BaseAdapter{
 
         // Starred Status: Turns star into Yellow if the game is starred
 
-        if(matchList.get(position).isStarred()) {
-            starred.setColorFilter(Color.argb(255, 255, 214, 51));
-        } else { }
+       if(matchList.get(position).isStarred()) {
+           starred.setColorFilter(Color.argb(255, 255, 214, 51));
+       } else { }
+
+        starredGameList = new ArrayList<>();
+
 
         starred.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,16 +132,26 @@ public class MatchListAdapter extends BaseAdapter{
 
                     // when the Colored star is clicked, change color back to white and set the "Starred" value to false in both data and real-time database
 
+                    gameID = matchList.get(position).getId();
+
+                    // Removes the starredGame from the list of the user with the deviceID
+                    userReference.child(gameID).getRef().removeValue();
+                    matchReference.setValue(generateRandomString());
                     matchList.get(position).setStarred(false);
-                    matchReference.setValue(false);
                     starred.setColorFilter(Color.argb(255, 255, 255, 255)); // White
                 }
                 else {
 
                     // when the unColored star is clicked, change color to yellow and set the "Starred" value to true in both data and real-time database
 
+                    gameID = matchList.get(position).getId();
+                    starredGameList.add(gameID);
+
+                    // add the ID of the game to the list of starredGames
+                    userReference.child(gameID).setValue(gameID);
+
+                    matchReference.setValue(generateRandomString());
                     matchList.get(position).setStarred(true);
-                    matchReference.setValue(true);
                     starred.setColorFilter(Color.argb(255, 255, 214, 51)); // Yellow
                 }
             }
@@ -124,4 +159,20 @@ public class MatchListAdapter extends BaseAdapter{
 
         return view;
     }
+
+    // random String generator for adding a dummy data for refreshing the real-time DB
+    protected String generateRandomString() {
+
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 18) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+
+    }
+
 }

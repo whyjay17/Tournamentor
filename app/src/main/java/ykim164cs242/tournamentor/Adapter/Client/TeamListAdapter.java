@@ -57,6 +57,7 @@ public class TeamListAdapter extends BaseAdapter{
         TextView foundationYear = (TextView) view.findViewById(R.id.team_foundation_year_item);
         TextView captainName = (TextView) view.findViewById(R.id.team_captain_item);
 
+
         // Set Texts for TextViews
 
         teamName.setText(teamList.get(position).getTeamName());

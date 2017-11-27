@@ -11,42 +11,60 @@
     <TextView
         android:id="@+id/textView18"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
         android:text="Manage Tournament"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#FF5733" />
 
+    <TextView
+        android:id="@+id/tournament_name_option"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="40dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="tournamentName"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
     <Button
         android:id="@+id/edit_tournament_button"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:text="Add/Edit Tournament" />
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:text="Edit This Tournament" />
 
     <Button
-        android:id="@+id/set_game_schedule_button"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
+        android:id="@+id/add_tournament_button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
-        android:text="Set Game Schedule" />
-
-    <Button
-        android:id="@+id/manage_game_button"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:text="Manage Game" />
+        android:layout_weight="1"
+        android:text="Add Tournament" />
 
     <Button
         android:id="@+id/delete_tournament_button"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
+
+        android:layout_weight="1"
         android:text="Delete Tournament" />
+
+    <Button
+        android:id="@+id/set_game_schedule_button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:text="Set Game Schedule" />
+
 </LinearLayout>

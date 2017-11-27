@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import ykim164cs242.tournamentor.Activity.Admin.AdminLoginActivity;
 import ykim164cs242.tournamentor.Activity.Client.SelectChannelActivity;
 import ykim164cs242.tournamentor.R;
 
@@ -19,6 +20,7 @@ import ykim164cs242.tournamentor.R;
 public class StartMenuActivity extends AppCompatActivity {
 
     Button joinChannelButton;
+    Button adminModeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,16 +28,22 @@ public class StartMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start_menu);
 
         joinChannelButton = (Button) findViewById(R.id.join_channel_button);
-
+        adminModeButton = (Button) findViewById(R.id.admin_mode_button);
         // Moves to the Channel Selection Screen
 
         joinChannelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent channelIntent = new Intent(StartMenuActivity.this, SelectChannelActivity.class);
                 startActivity(channelIntent);
+            }
+        });
 
+        adminModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent adminIntent = new Intent(StartMenuActivity.this, AdminLoginActivity.class);
+                startActivity(adminIntent);
             }
         });
     }

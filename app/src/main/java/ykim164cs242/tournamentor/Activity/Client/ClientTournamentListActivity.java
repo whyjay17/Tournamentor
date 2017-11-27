@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -38,7 +39,10 @@ public class ClientTournamentListActivity extends AppCompatActivity {
     private List<TournamentListItem> tournamentListItems;
 
     private String passedDataFromChannelSelection;
+    private String passedInDeviceID;
+
     // Storages for parsed data from the real-time database
+    private List<String> channelIDList;
     private List<String> tournamentNameList;
     private List<String> termList;
 
@@ -56,18 +60,35 @@ public class ClientTournamentListActivity extends AppCompatActivity {
         try {
             Intent intent = getIntent();
             passedDataFromChannelSelection = intent.getStringExtra("channelID");
+            passedInDeviceID = intent.getStringExtra("deviceID");
 
         } catch(Exception e) {
             e.printStackTrace();
         }
 
-        referenceWithID = channelsReference.child(passedDataFromChannelSelection);
+        referenceWithID = channelsReference.child(passedDataFromChannelSelection).child("tournaments");
 
         tournamentListView = (ListView) findViewById(R.id.select_tournament_listview);
 
+        channelIDList = new ArrayList<>();
         tournamentListItems = new ArrayList<>();
         tournamentNameList = new ArrayList<>();
         termList = new ArrayList<>();
+
+        tournamentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String channelID = passedDataFromChannelSelection;
+
+                Intent intent = new Intent(ClientTournamentListActivity.this, ClientMainActivity.class);
+                intent.putExtra("tournamentName", tournamentNameList.get(position));
+                intent.putExtra("channelID", channelIDList.get(position));
+                intent.putExtra("deviceID", passedInDeviceID);
+
+                startActivity(intent);
+            }
+        });
 
         adapter = new TournamentListAdapter(this, tournamentListItems);
         tournamentListView.setAdapter(adapter);
@@ -83,20 +104,21 @@ public class ClientTournamentListActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        channelsReference.addValueEventListener(new ValueEventListener() {
+        referenceWithID.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 // Clear the storages for redrawing of the ListView
+                channelIDList.clear();
                 tournamentNameList.clear();
                 termList.clear();
-
 
                 // Fires every single time the channelReference updates in the Real-time DB
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     tournamentListItems.clear();
-                    tournamentNameList.add(snapshot.child("Tournaments").child("name").getValue().toString());
-                    termList.add(snapshot.child("Tournaments").child("term").getValue().toString());
+                    channelIDList.add(passedDataFromChannelSelection);
+                    tournamentNameList.add(snapshot.child("name").getValue().toString());
+                    termList.add(snapshot.child("term").getValue().toString());
 
                 }
 

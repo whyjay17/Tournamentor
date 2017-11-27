@@ -15,6 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""/>
+
     </TableRow>
 
     <TableRow
@@ -31,7 +32,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Competition Name"
-            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="#FF5733"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -41,13 +41,10 @@
             android:id="@+id/game_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:text="Date"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            app:layout_constraintHorizontal_bias="0.343"
-            app:layout_constraintLeft_toRightOf="@+id/comp_name"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:gravity="left"
+            android:layout_marginLeft="28dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
     </TableRow>
 
@@ -60,7 +57,7 @@
             android:id="@+id/textView13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="                   " />
+            android:text="            " />
     </TableRow>
 
     <TableRow
@@ -70,7 +67,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="             " />
+            android:layout_gravity="center"
+            android:text="        "
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <TextView
             android:id="@+id/team_a"
@@ -78,7 +77,7 @@
             android:layout_height="wrap_content"
 
             android:text="Team A"
-            android:textAlignment="center"
+            android:textSize="18dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             app:layout_constraintTop_toBottomOf="@+id/comp_name"
             tools:layout_editor_absoluteX="102dp" />
@@ -87,8 +86,10 @@
             android:id="@+id/score_a"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Score A"
-            android:textAlignment="center"
+            android:text="A"
+            android:gravity="left"
+            android:layout_marginLeft="28dp"
+            android:textSize="18dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             app:layout_constraintLeft_toRightOf="@+id/team_a"
             app:layout_constraintTop_toBottomOf="@+id/game_date" />
@@ -105,37 +106,29 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="FT"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="    " />
+            android:text="                              " />
 
-        <TextView
-            android:id="@+id/textView6"
+        <ImageView
+            android:id="@+id/edit_game_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="                                       " />
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerInside"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
 
-        <TextView
-            android:id="@+id/textView15"
+        <ImageView
+            android:id="@+id/delete_game_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" " />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="  " />
-
-        <TextView
-            android:id="@+id/textView17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="        " />
+            android:scaleType="fitXY"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
 
 
     </TableRow>
@@ -147,24 +140,25 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="           " />
+            android:text="       " />
 
         <TextView
             android:id="@+id/team_b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Team B"
+            android:textSize="18dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            app:layout_constraintTop_toBottomOf="@+id/team_a"
-            android:textAlignment="center"
             tools:layout_editor_absoluteX="102dp" />
 
         <TextView
             android:id="@+id/score_b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Score B"
-            android:textAlignment="center"
+            android:text="B"
+            android:textSize="18dp"
+            android:gravity="left"
+            android:layout_marginLeft="28dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             app:layout_constraintLeft_toRightOf="@+id/team_b"
             app:layout_constraintTop_toBottomOf="@+id/score_a" />
@@ -187,7 +181,7 @@
 
         <Button
             android:id="@+id/end_game_button"
-            android:layout_width="20dp"
+            android:layout_width="18dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_weight="0.33"

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.style.TtsSpan;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,20 +21,25 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import ykim164cs242.tournamentor.Activity.Client.ClientTournamentListActivity;
+import ykim164cs242.tournamentor.Activity.Client.SelectChannelActivity;
 import ykim164cs242.tournamentor.Adapter.Admin.TournamentListAdapter;
 import ykim164cs242.tournamentor.InformationStorage.TournamentInfo;
 import ykim164cs242.tournamentor.ListItem.TournamentListItem;
 import ykim164cs242.tournamentor.R;
 
 /**
- * TeamListActivity represents a screen of displaying participating teams of the tournament.
- * The team information is fetched from the Firebase real-time database and displayed
- * in the ListView of the teams.
+ * The AdminTournamentListActivity class represents the Activity that displays the tournament list.
+ * The Admin user can add new tournament and manage the tournament by clicking on the
+ * item of the ListView.
  */
 public class AdminTournamentListActivity extends AppCompatActivity {
 
     ListView tournamentListView;
 
+    private String startDate;
+    private String endDate;
+    private List<String> dateArray;
     private FirebaseUser firebaseUser;
 
     private TournamentListAdapter adapter;
@@ -41,6 +47,7 @@ public class AdminTournamentListActivity extends AppCompatActivity {
 
     private Button addButton;
     private TextView emptyText;
+    private String channelID;
 
     // Storages for parsed data from the real-time database
     private List<String> tournamentNameList;
@@ -48,7 +55,7 @@ public class AdminTournamentListActivity extends AppCompatActivity {
 
     // Firebase Database references.
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference tournamentReference = rootReference.child("Tournaments");
+    DatabaseReference tournamentTermReference;
     DatabaseReference channelsReference = rootReference.child("Channels");
 
     private FirebaseAuth firebaseAuth;
@@ -66,26 +73,40 @@ public class AdminTournamentListActivity extends AppCompatActivity {
         }
 
         firebaseUser = firebaseAuth.getCurrentUser();
-        //firebaseUser.getEmail();
 
-        //saveTournamentInfo(firebaseUser, "Test Tournament", "Dec 10 - 14");
+        channelID = firebaseUser.getUid();
 
         tournamentListView = (ListView) findViewById(R.id.manage_tournament_listview);
 
         tournamentListItems = new ArrayList<>();
         tournamentNameList = new ArrayList<>();
         termList = new ArrayList<>();
+        dateArray =  new ArrayList<>();
 
         addButton = (Button) findViewById(R.id.add_tournament_button);
 
+        // Move to add screen
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Add tournament dialog
-                //saveTournamentInfo(firebaseUser, "test", "test");
                 Intent addTournamentIntent = new Intent(AdminTournamentListActivity.this, AdminAddTournamentActivity.class);
                 addTournamentIntent.putExtra("channelID", firebaseUser.getUid());
                 startActivity(addTournamentIntent);
+            }
+        });
+
+        // ListView item click listener
+        // Move to Tournament Managemenet Option Screen
+        tournamentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String name = tournamentNameList.get(position);
+
+                Intent intent = new Intent(AdminTournamentListActivity.this, AdminTournamentMenuActivity.class);
+                intent.putExtra("tournamentName", name);
+                startActivity(intent);
+
             }
         });
 
@@ -117,7 +138,9 @@ public class AdminTournamentListActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     tournamentListItems.clear();
                     tournamentNameList.add(snapshot.child("name").getValue().toString());
-                    termList.add(snapshot.child("term").getValue().toString());
+                    if(snapshot.child("term").exists()) {
+                        termList.add(snapshot.child("term").getValue().toString());
+                    }
                 }
 
                 for(int i = 0; i < tournamentNameList.size(); i++) {
@@ -135,24 +158,4 @@ public class AdminTournamentListActivity extends AppCompatActivity {
         });
     }
 
-    private void saveTournamentInfo(final FirebaseUser firebaseUser, String name, String term) {
-        //TODO: Change term to Date
-        final TournamentInfo tournamentInfo =  new TournamentInfo(name, term);
-        DatabaseReference tournament = rootReference.child("Tournament");
-        tournament.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // users -> githubID : User Profile Data
-                String channelName = firebaseUser.getUid();
-                //rootReference.child("Channels").child(channelName).setValue(tournamentInfo);
-                rootReference.child("Channels").child(channelName).child("Tournaments").setValue(tournamentInfo);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 }

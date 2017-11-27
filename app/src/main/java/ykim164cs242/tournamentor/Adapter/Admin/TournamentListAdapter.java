@@ -13,8 +13,8 @@ import ykim164cs242.tournamentor.ListItem.TournamentListItem;
 import ykim164cs242.tournamentor.R;
 
 /**
- * ChannelListAdapter represents an Adapter that can be used in the ListView of matches.
- * It puts in the right data inside the activity_channel_list_items.
+ * TournamentListAdapter represents an Adapter that can be used in the ListView of tournaments.
+ * It puts in the right data inside the activity_admin_tournament_list_item
  */
 
 public class TournamentListAdapter extends BaseAdapter{

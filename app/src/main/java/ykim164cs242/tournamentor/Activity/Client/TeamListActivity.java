@@ -36,13 +36,16 @@ public class TeamListActivity extends AppCompatActivity {
 
     // Firebase Database references.
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference tournamentReference = rootReference.child("Tournaments");
-    DatabaseReference teamReference = tournamentReference.child("Test Tournament").child("Teams");
+    DatabaseReference tournamentReference;
+    DatabaseReference teamReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_list);
+
+        String channelId = ClientMainActivity.passedInChannelID;
+        String tournamentName = ClientMainActivity.passedInTournamentName;
 
         teamListView = (ListView) findViewById(R.id.team_listview);
 
@@ -50,6 +53,9 @@ public class TeamListActivity extends AppCompatActivity {
         teamNameList = new ArrayList<>();
         foundationYearList = new ArrayList<>();
         captainNameList = new ArrayList<>();
+
+        tournamentReference = rootReference.child("Channels").child(channelId).child("tournaments").child(tournamentName);
+        teamReference = tournamentReference.child("teams");
 
         adapter = new TeamListAdapter(this, teamListItems);
         teamListView.setAdapter(adapter);
@@ -77,9 +83,9 @@ public class TeamListActivity extends AppCompatActivity {
                 // Fires every single time the channelReference updates in the Real-time DB
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     teamListItems.clear();
-                    teamNameList.add(snapshot.child("Name").getValue().toString());
-                    foundationYearList.add(snapshot.child("Foundation").getValue().toString());
-                    captainNameList.add(snapshot.child("Captain").getValue().toString());
+                    teamNameList.add(snapshot.child("teamName").getValue().toString());
+                    foundationYearList.add(snapshot.child("foundationYear").getValue().toString());
+                    captainNameList.add(snapshot.child("captainName").getValue().toString());
                 }
 
                 for(int i = 0; i < teamNameList.size(); i++) {

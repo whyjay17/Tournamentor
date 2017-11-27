@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,11 @@ import ykim164cs242.tournamentor.InformationStorage.TeamInfo;
 import ykim164cs242.tournamentor.InformationStorage.TournamentInfo;
 import ykim164cs242.tournamentor.R;
 
+/**
+ * The AddNewAdminActivity class represents the screen where a user can
+ * add an account for the Admin side and set up a channel.
+ */
+
 public class AddNewAdminActivity extends AppCompatActivity {
 
     private Button submitButton;
@@ -53,6 +59,7 @@ public class AddNewAdminActivity extends AppCompatActivity {
     private Date currentDate;
     private String dateInString;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +100,11 @@ public class AddNewAdminActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * The registerUser function handles registration.
+     * It registers the user on the Firebase DB with the email given.
+     *
+     */
     private void registerUser(){
 
         String email = inputEmail.getText().toString();
@@ -100,11 +112,13 @@ public class AddNewAdminActivity extends AppCompatActivity {
         final String channelName = inputChannelName.getText().toString();
 
         //checking if email and passwords are empty
-        if (true) {
-            //Toast.makeText(this, "You Passed", Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(this, "Invalid email or not match password", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
         }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
+        }
+
         //if the email and password are not empty
         //displaying a progress dialog
         progressDialog.setMessage("Registering Please Wait...");
@@ -116,34 +130,26 @@ public class AddNewAdminActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         //checking if success
+
                         if(task.isSuccessful()) {
-                            //display some message here
+
                             Toast.makeText(AddNewAdminActivity.this,"Successfully registered",Toast.LENGTH_LONG).show();
 
                             final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                             String adminID = firebaseUser.getUid();
                             String adminEmail = firebaseUser.getEmail();
 
-                            TeamInfo tempteam = new TeamInfo("dd", "Gwang", "2013", "Sam");
-                            List<TeamInfo> teamInfoList = new ArrayList<>();
-                            teamInfoList.add(tempteam);
-
-                            TournamentInfo temptour = new TournamentInfo("temp2011-2012", "2011-2012", teamInfoList, null);
                             AdminUserInfo adminUserInfo = new AdminUserInfo(adminID, adminEmail, channelName);
                             ChannelInfo channelInfo = new ChannelInfo(channelName, dateInString);
 
-                            //rootReference.child("Admin").child(adminID).setValue(adminUserInfo);
-                            //rootReference.child("Channels").child(adminID).setValue(channelInfo);
-                            //rootReference.child("Channels").child(adminID).child("tournaments").child("temp").setValue(temptour);
-                            //rootReference.child("Channels").child(adminID).child("tournaments").child("temp2").setValue(temptour);
                             Intent successIntent = new Intent(AddNewAdminActivity.this, AdminTournamentListActivity.class);
 
                             successIntent.putExtra("channelID", adminID);
-
+                            rootReference.child("Channels").child(adminID).setValue(channelInfo);
                             startActivity(successIntent);
 
                         } else {
-                            //display some message here
+
                             Toast.makeText(AddNewAdminActivity.this,"Registration Error",Toast.LENGTH_LONG).show();
                         }
                         progressDialog.dismiss();

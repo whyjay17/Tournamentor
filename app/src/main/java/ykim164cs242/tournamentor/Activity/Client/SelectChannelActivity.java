@@ -53,7 +53,7 @@ public class SelectChannelActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_channel);
 
-        String deviceID = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
+        final String deviceID = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
 
         addUserToDB(deviceID);
 
@@ -75,9 +75,9 @@ public class SelectChannelActivity extends AppCompatActivity {
                Intent intent = new Intent(SelectChannelActivity.this, ClientTournamentListActivity.class);
                String key = channelIDList.get(position);
                intent.putExtra("channelID", key);
+                intent.putExtra("deviceID", deviceID);
 
                startActivity(intent);
-
             }
         });
 
@@ -104,8 +104,8 @@ public class SelectChannelActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     channelListItems.clear();
                     channelIDList.add(snapshot.getKey());
-                    channelNameList.add(snapshot.child("name").getValue().toString());
-                    termList.add(snapshot.child("term").getValue().toString());
+                    channelNameList.add(snapshot.child("channelName").getValue().toString());
+                    termList.add(snapshot.child("createdDate").getValue().toString());
                 }
 
                 for(int i = 0; i < channelNameList.size(); i++) {
@@ -126,6 +126,9 @@ public class SelectChannelActivity extends AppCompatActivity {
     public void addUserToDB(String deviceID) {
 
         final ClientUserInfo clientUserInfo =  new ClientUserInfo(deviceID, null);
+
+        DatabaseReference userReference = rootReference.child("Users");
+
         rootReference.child("Users").child(deviceID).setValue(clientUserInfo);
 
     }

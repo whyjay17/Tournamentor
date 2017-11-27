@@ -47,11 +47,14 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
     // Firebase Database Reference
 
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference channelsReference = rootReference.child("Channels");
+    DatabaseReference channelsReference;
+    DatabaseReference tournamentReference;
 
     // Passed-in data from the SelectChannel Activity. Will be used to reach the right database reference
 
-    String passedDataFromChannelSelection;
+    public static String passedInChannelID;
+    public static String passedInTournamentName;
+    public static String passedInDeviceID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +64,16 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
         // Receiving data from the SelectChannel Activity
         try {
             Intent intent = getIntent();
-            passedDataFromChannelSelection = intent.getStringExtra("tournamentName");
+            passedInTournamentName = intent.getStringExtra("tournamentName");
+            passedInChannelID = intent.getStringExtra("channelID");
+            passedInDeviceID = intent.getStringExtra("deviceID");
 
         } catch(Exception e) {
             e.printStackTrace();
         }
+
+        channelsReference = rootReference.child("Channels").child(passedInChannelID);
+        tournamentReference = channelsReference.child("tournaments").child(passedInTournamentName);
 
         // Fragment Manager for TabLayout
 
@@ -134,7 +142,6 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
 
             // Handle the nav_league_status action: Displays dialog that contains fetched league information from the real-time database
 
-            DatabaseReference competitionReference = channelsReference.child(passedDataFromChannelSelection + " Channel");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(ClientMainActivity.this);
             View dialogView = getLayoutInflater().inflate(R.layout.dialog_league_info, null);
@@ -147,13 +154,12 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
 
             // Fetching data from the real-time database
 
-            competitionReference.addValueEventListener(new ValueEventListener() {
+            tournamentReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    competitionName.setText(dataSnapshot.child("Name").getValue().toString());
-                    term.setText(dataSnapshot.child("Term").getValue().toString());
-                    hostName.setText(dataSnapshot.child("Host").getValue().toString());
+                    competitionName.setText(dataSnapshot.child("name").getValue().toString());
+                    term.setText(dataSnapshot.child("term").getValue().toString());
                 }
 
                 @Override

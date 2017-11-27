@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import ykim164cs242.tournamentor.R;
 
+/**
+ * The AdminLoginActivity class represents the screen where a user can
+ * login to manage the channel and the tournaments.
+ */
 public class AdminLoginActivity extends AppCompatActivity {
 
     private Button loginButton;
@@ -40,10 +45,6 @@ public class AdminLoginActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if(firebaseAuth.getCurrentUser() != null) {
-            Toast.makeText(this, "Already logged in", Toast.LENGTH_SHORT).show();
-        }
-
         loginButton = (Button) findViewById(R.id.login_button);
         inputEmail = (EditText) findViewById(R.id.enter_email);
         inputPassword = (EditText) findViewById(R.id.enter_password);
@@ -62,6 +63,9 @@ public class AdminLoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Intent newIdIntent = new Intent(AdminLoginActivity.this, AddNewAdminActivity.class);
+
+                startActivity(newIdIntent);
 
             }
         });
@@ -73,11 +77,13 @@ public class AdminLoginActivity extends AppCompatActivity {
         String password = inputPassword.getText().toString();
 
         //checking if email and passwords are empty
-        if (true) {
-
-        }else {
-            Toast.makeText(this, "Invalid email or not match password", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show();
         }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(this, "Please enter password", Toast.LENGTH_SHORT).show();
+        }
+
         //if the email and password are not empty
         //displaying a progress dialog
         progressDialog.setMessage("Signing in. Please Wait...");

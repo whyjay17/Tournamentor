@@ -12,21 +12,34 @@ public class GameInfo {
     private String ID;
     private String fieldName; //could be combined with competition name
     private String gameTime;
+    private String gameDate;
     private String teamA;
     private String teamB;
-    private int scoreA;
-    private int scoreB;
+    private String scoreA;
+    private String scoreB;
     private boolean isLive;
+    private String tournamentName;
+    private PlayerInfo[] scorers;
 
-    public GameInfo(String ID, String fieldName, String gameTime, String teamA, String teamB, int scoreA, int scoreB, boolean isLive) {
+    private String winner;
+
+
+    public GameInfo(String ID, String fieldName, String gameTime, String gameDate, String teamA, String teamB, String scoreA, String scoreB, boolean isLive, String tournamentName) {
         this.ID = ID;
         this.fieldName = fieldName;
         this.gameTime = gameTime;
+        this.gameDate = gameDate;
         this.teamA = teamA;
         this.teamB = teamB;
         this.scoreA = scoreA;
         this.scoreB = scoreB;
         this.isLive = isLive;
+        this.tournamentName = tournamentName;
+        this.winner = "draw"; //Default is draw
+    }
+
+    public GameInfo(String ID) {
+        this.ID = ID;
     }
 
     public String getID() {
@@ -53,6 +66,14 @@ public class GameInfo {
         this.gameTime = gameTime;
     }
 
+    public String getGameDate() {
+        return gameDate;
+    }
+
+    public void setGameDate(String gameDate) {
+        this.gameDate = gameDate;
+    }
+
     public String getTeamA() {
         return teamA;
     }
@@ -69,19 +90,19 @@ public class GameInfo {
         this.teamB = teamB;
     }
 
-    public int getScoreA() {
+    public String getScoreA() {
         return scoreA;
     }
 
-    public void setScoreA(int scoreA) {
+    public void setScoreA(String scoreA) {
         this.scoreA = scoreA;
     }
 
-    public int getScoreB() {
+    public String getScoreB() {
         return scoreB;
     }
 
-    public void setScoreB(int scoreB) {
+    public void setScoreB(String scoreB) {
         this.scoreB = scoreB;
     }
 
@@ -91,5 +112,21 @@ public class GameInfo {
 
     public void setLive(boolean live) {
         isLive = live;
+    }
+
+    public String getTournamentName() {
+        return tournamentName;
+    }
+
+    public void setTournamentName(String tournamentName) {
+        this.tournamentName = tournamentName;
+    }
+
+    public PlayerInfo[] getScorers() {
+        return scorers;
+    }
+
+    public void setScorers(PlayerInfo[] scorers) {
+        this.scorers = scorers;
     }
 }

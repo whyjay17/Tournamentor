@@ -12,9 +12,9 @@ import java.util.List;
 public class ClientUserInfo {
 
     private String deviceID;
-    private List<GameInfo> starredGames;
+    private List<String> starredGames;
 
-    public ClientUserInfo(String deviceID, List<GameInfo> starredGames) {
+    public ClientUserInfo(String deviceID, List<String> starredGames) {
         this.deviceID = deviceID;
         this.starredGames = starredGames;
     }
@@ -27,11 +27,11 @@ public class ClientUserInfo {
         this.deviceID = deviceID;
     }
 
-    public List<GameInfo> getStarredGames() {
+    public List<String> getStarredGames() {
         return starredGames;
     }
 
-    public void setStarredGames(List<GameInfo> starredGames) {
+    public void setStarredGames(List<String> starredGames) {
         this.starredGames = starredGames;
     }
 }

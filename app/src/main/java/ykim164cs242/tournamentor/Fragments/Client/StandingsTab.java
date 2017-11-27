@@ -32,8 +32,8 @@ public class StandingsTab extends Fragment {
 
         View view = inflater.inflate(R.layout.tab_standings, container, false);
 
-        StandingsFragment standingsFragment = new StandingsFragment();
-        ScorerFragment scorerFragment = new ScorerFragment();
+        LeagueTableFragment standingsFragment = new LeagueTableFragment();
+        ScoreTableFragment scorerFragment = new ScoreTableFragment();
 
         // Places two fragments
 

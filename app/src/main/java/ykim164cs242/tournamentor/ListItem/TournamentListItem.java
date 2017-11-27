@@ -1,7 +1,7 @@
 package ykim164cs242.tournamentor.ListItem;
 
 /**
- * ChannelListItem class represents a component of the ListView in the Channel List Page.
+ * TournamentListItem class represents a component of the ListView in the Tournament List Page.
  * It contains the id (or index), channelName, competitionTerm, hostOrganization names.
  */
 public class TournamentListItem {

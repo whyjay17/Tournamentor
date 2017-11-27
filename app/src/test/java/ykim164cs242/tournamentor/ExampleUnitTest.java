@@ -8,7 +8,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import ykim164cs242.tournamentor.ListItem.LeagueTableItem;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
+import ykim164cs242.tournamentor.ListItem.ScoreTableItem;
 
 import static org.junit.Assert.*;
 
@@ -18,28 +25,203 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
 
-    DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference tournamentReference = rootReference.child("Tournaments");
-    DatabaseReference matchReference = tournamentReference.child("Test Tournament").child("Matches");
+    private List<ScoreTableItem> scoreTableItems;
+    private List<ScoreTableItem> rankedScoreTableItems;
 
+    private List<LeagueTableItem> leagueTableItems;
+    private List<LeagueTableItem> rankedLeagueTableItems;
+
+
+    /**
+     * sortScoreTableTest tests whether the sortScoreTable function properly
+     * sorts the table based on the number of goals in descending order.
+     */
     @Test
-    public void addition_isCorrect() throws Exception {
+    public void sortScoreTableTest() throws Exception {
 
-        DatabaseReference testReference = matchReference.child("Nov 13, 2017 Team Eagles vs Team Tigers");
+        scoreTableItems = new ArrayList<ScoreTableItem>();
 
-        testReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        // Add 5 players
 
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    assertEquals(snapshot.child("fieldName").getValue().toString(), "UIUC Sixpack Field");
-                }
-            }
+        scoreTableItems.add(new ScoreTableItem("Player 1", "Test Team", 4));
+        scoreTableItems.add(new ScoreTableItem("Player 2", "Test Team", 8));
+        scoreTableItems.add(new ScoreTableItem("Player 3", "Test Team", 1));
+        scoreTableItems.add(new ScoreTableItem("Player 4", "Test Team", 3));
+        scoreTableItems.add(new ScoreTableItem("Player 5", "Test Team", 6));
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        sortScoreTable(scoreTableItems);
 
+        // Player 2 is on the top rank
+        assertTrue(scoreTableItems.get(0).getPlayerName().equalsIgnoreCase("Player 2"));
+    }
+
+    /**
+     * Another sortScoreTableTest with more players
+     */
+    @Test
+    public void sortScoreTableTest2() throws Exception {
+
+        scoreTableItems = new ArrayList<ScoreTableItem>();
+
+        // Add 5 players
+
+        scoreTableItems.add(new ScoreTableItem("Player 1", "Test Team", 8));
+        scoreTableItems.add(new ScoreTableItem("Player 2", "Test Team", 3));
+        scoreTableItems.add(new ScoreTableItem("Player 3", "Test Team", 5));
+        scoreTableItems.add(new ScoreTableItem("Player 4", "Test Team", 1));
+        scoreTableItems.add(new ScoreTableItem("Player 5", "Test Team", 2));
+        scoreTableItems.add(new ScoreTableItem("Player 6", "Test Team", 5));
+        scoreTableItems.add(new ScoreTableItem("Player 7", "Test Team", 9));
+        scoreTableItems.add(new ScoreTableItem("Player 8", "Test Team", 2));
+
+        sortScoreTable(scoreTableItems);
+
+        // Player 2 is on the top rank
+        assertTrue(scoreTableItems.get(0).getPlayerName().equalsIgnoreCase("Player 7"));
+    }
+
+    /**
+     * rankSortScoreTableTest tests whether the sortScoreTable function properly
+     * sorts the table based on the number of goals in descending order and then give them the correct Rank.
+     */
+    @Test
+    public void rankSortScoreTableTest() throws Exception {
+
+        scoreTableItems = new ArrayList<ScoreTableItem>();
+        rankedScoreTableItems = new ArrayList<>();
+
+        // Add 5 players
+
+        scoreTableItems.add(new ScoreTableItem("Player 1", "Test Team", 4));
+        scoreTableItems.add(new ScoreTableItem("Player 2", "Test Team", 8));
+        scoreTableItems.add(new ScoreTableItem("Player 3", "Test Team", 1));
+        scoreTableItems.add(new ScoreTableItem("Player 4", "Test Team", 3));
+        scoreTableItems.add(new ScoreTableItem("Player 5", "Test Team", 6));
+
+        sortScoreTable(scoreTableItems);
+
+        int currRank = 1;
+
+        // Rank the sorted score table
+        for(ScoreTableItem p : scoreTableItems) {
+            rankedScoreTableItems.add(new ScoreTableItem(currRank, p.getPlayerName(), p.getTeamName(), p.getNumGoals()));
+            currRank++;
+        }
+
+        // Player 2 is on the top rank
+        assertTrue(rankedScoreTableItems.get(0).getPlayerName().equalsIgnoreCase("Player 2"));
+        // Player 2 is rank 1
+        assertTrue(rankedScoreTableItems.get(0).getScoreRank() == 1);
+        // Player 3 is rank 5
+        assertTrue(rankedScoreTableItems.get(4).getScoreRank() == 5);
+    }
+
+    /**
+     * sortScoreTableTest tests whether the sortScoreTable function properly
+     * sorts the table based on Points in descending order.
+     */
+    @Test
+    public void sortLeagueTableTest() throws Exception {
+
+        leagueTableItems = new ArrayList<LeagueTableItem>();
+
+        // Add 5 players
+
+        leagueTableItems.add(new LeagueTableItem(0, "Team A", 3, 3, 3, 3, 3, 3, 3, 3));
+        leagueTableItems.add(new LeagueTableItem(0, "Team B", 3, 3, 3, 3, 3, 3, 3, 1));
+        leagueTableItems.add(new LeagueTableItem(0, "Team C", 3, 3, 3, 3, 3, 3, 3, 6));
+        leagueTableItems.add(new LeagueTableItem(0, "Team D", 3, 3, 3, 3, 3, 3, 3, 2));
+        leagueTableItems.add(new LeagueTableItem(0, "Team E", 3, 3, 3, 3, 3, 3, 3, 8));
+
+        sortLeagueTable(leagueTableItems);
+
+        // Team E is on the top rank
+        assertTrue(leagueTableItems.get(0).getTeamName().equalsIgnoreCase("Team E"));
+        // Team B is the last place
+        assertTrue(leagueTableItems.get(4).getTeamName().equalsIgnoreCase("Team B"));
+    }
+
+    /**
+     * sortScoreTableTest with more teams.
+     */
+    @Test
+    public void sortLeagueTableTest2() throws Exception {
+
+        leagueTableItems = new ArrayList<LeagueTableItem>();
+
+        // Add 5 players
+
+        leagueTableItems.add(new LeagueTableItem(0, "Team A", 3, 3, 3, 3, 3, 3, 3, 3));
+        leagueTableItems.add(new LeagueTableItem(0, "Team B", 3, 3, 3, 3, 3, 3, 3, 1));
+        leagueTableItems.add(new LeagueTableItem(0, "Team C", 3, 3, 3, 3, 3, 3, 3, 6));
+        leagueTableItems.add(new LeagueTableItem(0, "Team D", 3, 3, 3, 3, 3, 3, 3, 2));
+        leagueTableItems.add(new LeagueTableItem(0, "Team E", 3, 3, 3, 3, 3, 3, 3, 0));
+        leagueTableItems.add(new LeagueTableItem(0, "Team F", 3, 3, 3, 3, 3, 3, 3, 6));
+        leagueTableItems.add(new LeagueTableItem(0, "Team G", 3, 3, 3, 3, 3, 3, 3, 12));
+        leagueTableItems.add(new LeagueTableItem(0, "Team H", 3, 3, 3, 3, 3, 3, 3, 8));
+
+        sortLeagueTable(leagueTableItems);
+
+        // Team G is on the top rank
+        assertTrue(leagueTableItems.get(0).getTeamName().equalsIgnoreCase("Team G"));
+        // Team E is the last place
+        assertTrue(leagueTableItems.get(7).getTeamName().equalsIgnoreCase("Team E"));
+    }
+
+    /**
+     * rankSortLeagueTableTest tests whether the sortScoreTable function properly
+     * sorts the table based on Points in descending order and then give them the correct Rank.
+     */
+    @Test
+    public void rankSortLeagueTableTest() throws Exception {
+
+        leagueTableItems = new ArrayList<LeagueTableItem>();
+        rankedLeagueTableItems = new ArrayList<>();
+
+        // Add 5 players
+
+        leagueTableItems.add(new LeagueTableItem(0, "Team A", 3, 3, 3, 3, 3, 3, 3, 3));
+        leagueTableItems.add(new LeagueTableItem(0, "Team B", 3, 3, 3, 3, 3, 3, 3, 1));
+        leagueTableItems.add(new LeagueTableItem(0, "Team C", 3, 3, 3, 3, 3, 3, 3, 6));
+        leagueTableItems.add(new LeagueTableItem(0, "Team D", 3, 3, 3, 3, 3, 3, 3, 2));
+        leagueTableItems.add(new LeagueTableItem(0, "Team E", 3, 3, 3, 3, 3, 3, 3, 8));
+
+        sortLeagueTable(leagueTableItems);
+
+        int currRank = 1;
+
+        // Rank the sorted league table
+        for(LeagueTableItem p : leagueTableItems) {
+            rankedLeagueTableItems.add(new LeagueTableItem(currRank, p.getTeamName(), p.getGamesPlayed(), p.getWins(),
+                    p.getDraws(), p.getLosses(), p.getGoalScored(), p.getGoalAgasint(), p.getGoalDifference(), p.getPoints()));
+            currRank++;
+        }
+
+        // Team E is on the top rank
+        assertTrue(rankedLeagueTableItems.get(0).getTeamName().equalsIgnoreCase("Team E"));
+        // Team B is the last place
+        assertTrue(rankedLeagueTableItems.get(4).getTeamName().equalsIgnoreCase("Team B"));
+        // Team E is rank 1
+        assertTrue(rankedLeagueTableItems.get(0).getRank() == 1);
+        // Team B is rank 5
+        assertTrue(rankedLeagueTableItems.get(4).getRank() == 5);
+    }
+
+    public void sortScoreTable(List<ScoreTableItem> table) {
+        Collections.sort(table, new Comparator<ScoreTableItem>(){
+            public int compare(ScoreTableItem o1, ScoreTableItem o2){
+                return o2.getNumGoals() - o1.getNumGoals();
             }
         });
     }
+
+    public void sortLeagueTable(List<LeagueTableItem> table) {
+        Collections.sort(table, new Comparator<LeagueTableItem>(){
+            public int compare(LeagueTableItem o1, LeagueTableItem o2){
+                return o2.getPoints() - o1.getPoints();
+            }
+        });
+    }
+
+
 }

@@ -18,14 +18,23 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#FF5733" />
 
-    <ListView
-        android:id="@+id/admin_match_listview"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="549dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/add_admin_game_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Game" />
+        <ListView
+            android:id="@+id/admin_match_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1" />
+
+        <Button
+            android:id="@+id/add_admin_game_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:text="Add Game" />
+    </LinearLayout>
+
 </LinearLayout>

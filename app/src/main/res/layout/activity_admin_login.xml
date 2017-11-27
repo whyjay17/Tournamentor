@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context="ykim164cs242.tournamentor.Activity.Admin.AdminLoginActivity">
 
     <TextView
@@ -23,14 +24,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:hint="Enter your email" />
+        android:hint="Enter your email"
+        android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/enter_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:hint="Enter your password" />
+        android:hint="Enter your password"
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/login_button"

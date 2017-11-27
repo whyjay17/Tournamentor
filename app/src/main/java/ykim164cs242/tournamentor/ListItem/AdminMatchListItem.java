@@ -1,7 +1,7 @@
 package ykim164cs242.tournamentor.ListItem;
 
 /**
- * MatchListItem class represents a component of the ListView in the Math List Page.
+ * AdminMatchListItem class represents a component of the ListView in the AdminMatch List Page.
  * It contains the id (or index), fieldName, game time, live status (boolean), team names,
  * and scores for each team.
  */
@@ -16,8 +16,10 @@ public class AdminMatchListItem {
     private int scoreA;
     private int scoreB;
     private boolean isLive;
+    private String tournamentName;
 
-    public AdminMatchListItem(String id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive) {
+
+    public AdminMatchListItem(String id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive, String tournamentName) {
         this.id = id;
         this.fieldName = fieldName;
         this.gameTime = gameTime;
@@ -27,6 +29,7 @@ public class AdminMatchListItem {
         this.scoreA = scoreA;
         this.scoreB = scoreB;
         this.isLive = isLive;
+        this.tournamentName = tournamentName;
     }
 
     public String getId() {
@@ -101,8 +104,11 @@ public class AdminMatchListItem {
         isLive = live;
     }
 
+    public String getTournamentName() {
+        return tournamentName;
+    }
 
-    // Constructor
-
-
+    public void setTournamentName(String tournamentName) {
+        this.tournamentName = tournamentName;
+    }
 }

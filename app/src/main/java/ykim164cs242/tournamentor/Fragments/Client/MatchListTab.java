@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import ykim164cs242.tournamentor.Activity.Client.ClientMainActivity;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.Adapter.Client.MatchListAdapter;
 import ykim164cs242.tournamentor.R;
@@ -33,6 +34,7 @@ public class MatchListTab extends Fragment {
 
     private MatchListAdapter adapter;
     private List<MatchListItem> matchListItems;
+    private List<String> userStarredMatchList;
 
     // Storages for parsed JSON data (repoName, userName, description of repositories)
     private List<String> matchIDList;
@@ -48,9 +50,10 @@ public class MatchListTab extends Fragment {
 
     // Firebase database reference
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference tournamentReference = rootReference.child("Tournaments");
-    DatabaseReference matchReference = tournamentReference.child("Test Tournament").child("Matches");
-
+    DatabaseReference tournamentReference;
+    DatabaseReference matchReference;
+    DatabaseReference userReference;
+    String deviceID = ClientMainActivity.passedInDeviceID;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,11 +73,19 @@ public class MatchListTab extends Fragment {
         isLiveList = new ArrayList<>();
         isStarredList = new ArrayList<>();
 
+        //temp starred storage
+        userStarredMatchList = new ArrayList<>();
+
+        String channelId = ClientMainActivity.passedInChannelID;
+        String tournamentName = ClientMainActivity.passedInTournamentName;
+
+        tournamentReference = rootReference.child("Channels").child(channelId).child("tournaments").child(tournamentName);
+        matchReference = tournamentReference.child("games");
+        userReference = rootReference.child("Users").child(deviceID).child("starredGames");
         adapter = new MatchListAdapter(getContext(), matchListItems);
         matchListView.setAdapter(adapter);
 
         return view;
-
     }
 
     /**
@@ -86,6 +97,24 @@ public class MatchListTab extends Fragment {
     public void onStart() {
         super.onStart();
 
+        userReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot userData) {
+
+                userStarredMatchList.clear();
+
+                for(DataSnapshot userDataSnapshot : userData.getChildren()) {
+
+                    userStarredMatchList.add(userDataSnapshot.getValue().toString());
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) { /* BLANK */}
+
+        });
+
         matchReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -93,13 +122,11 @@ public class MatchListTab extends Fragment {
                 clearCurrentList();
 
                 // Fires every single time the channelReference updates in the Real-time DB
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for(final DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     matchListItems.clear();
 
                     // ID Format: Date + TeamA + vs + TeamB
-                    matchIDList.add(snapshot.child("gameDate").getValue().toString() + " "
-                            + snapshot.child("teamA").getValue().toString()
-                    + " vs " + snapshot.child("teamB").getValue().toString());
+                    matchIDList.add(snapshot.child("id").getValue().toString());
 
                     fieldNameList.add(snapshot.child("fieldName").getValue().toString());
                     gameTimeList.add(snapshot.child("gameTime").getValue().toString());
@@ -108,8 +135,14 @@ public class MatchListTab extends Fragment {
                     scoreAList.add(Integer.parseInt(snapshot.child("scoreA").getValue().toString()));
                     teamBList.add(snapshot.child("teamB").getValue().toString());
                     scoreBList.add(Integer.parseInt(snapshot.child("scoreB").getValue().toString()));
-                    isLiveList.add((boolean)snapshot.child("isLive").getValue());
-                    isStarredList.add((boolean)snapshot.child("isStarred").getValue());
+                    isLiveList.add((boolean)snapshot.child("live").getValue());
+
+                    if(userStarredMatchList.contains(snapshot.child("id").getValue().toString())) {
+                        isStarredList.add(true);
+                    } else {
+                        isStarredList.add(false);
+                    }
+
                 }
 
                 for(int i = 0; i < fieldNameList.size(); i++) {
@@ -132,6 +165,7 @@ public class MatchListTab extends Fragment {
      * clearCurrentList clears items inside the data storage for data-redrawing
      */
     public void clearCurrentList() {
+
 
         matchIDList.clear();
         fieldNameList.clear();
