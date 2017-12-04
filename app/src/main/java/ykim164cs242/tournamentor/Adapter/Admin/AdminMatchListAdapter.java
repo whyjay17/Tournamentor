@@ -1,8 +1,17 @@
 package ykim164cs242.tournamentor.Adapter.Admin;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.icu.util.Calendar;
+import android.os.Build;
 import android.os.Handler;
+import android.provider.ContactsContract;
+import android.support.annotation.RequiresApi;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +19,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,9 +41,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
+import ykim164cs242.tournamentor.Activity.Admin.AdminAddMatchActivity;
 import ykim164cs242.tournamentor.Activity.Admin.AdminAddTournamentAddTeamActivity;
+import ykim164cs242.tournamentor.Activity.Admin.AdminMatchListActivity;
 import ykim164cs242.tournamentor.InformationStorage.GameInfo;
 import ykim164cs242.tournamentor.InformationStorage.PlayerInfo;
 import ykim164cs242.tournamentor.ListItem.AdminMatchListItem;
@@ -40,6 +56,7 @@ import ykim164cs242.tournamentor.ListItem.AdminTeamListItem;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.ListItem.ScoreTableItem;
 import ykim164cs242.tournamentor.R;
+import ykim164cs242.tournamentor.Utils.LevenshteinDistance;
 
 /**
  * AdminMatchListAdapter represents an Adapter that can be used in the ListView of matches.
@@ -54,12 +71,20 @@ public class AdminMatchListAdapter extends BaseAdapter{
     FirebaseUser firebaseUser;
 
     String scoredTeam;
-    String scorerName;
+    String rightScorer;
+    Boolean scorerExists;
 
     HashMap<String, Integer> goalHashMap;
+    HashMap<String, Integer> teamInfoHashMap;
+
 
     private Context context;
     private List<AdminMatchListItem> adminMatchList;
+
+    private String notificationMessage;
+
+    private DatePickerDialog.OnDateSetListener dateSetListener;
+    private TimePickerDialog.OnTimeSetListener timeSetListener;
 
     public AdminMatchListAdapter(Context context, List<AdminMatchListItem> adminMatchList) {
         this.context = context;
@@ -105,14 +130,15 @@ public class AdminMatchListAdapter extends BaseAdapter{
                 .child(adminMatchList.get(position).getTournamentName());
         final DatabaseReference scorerReference = tournamentReference.child("scorers");
         final DatabaseReference gamesReference = tournamentReference.child("games");
+        final DatabaseReference teamReference = tournamentReference.child("teams");
 
         final View view = View.inflate(context, R.layout.activity_admin_match_list_item, null);
         TextView fieldName = (TextView) view.findViewById(R.id.comp_name);
         final TextView gameTime = (TextView) view.findViewById(R.id.game_time);
-        TextView gameDate = (TextView) view.findViewById(R.id.game_date);
+        final TextView[] gameDate = {(TextView) view.findViewById(R.id.game_date)};
         final TextView teamA = (TextView) view.findViewById(R.id.team_a);
         final TextView teamB = (TextView) view.findViewById(R.id.team_b);
-        TextView scoreA = (TextView) view.findViewById(R.id.score_a);
+        final TextView scoreA = (TextView) view.findViewById(R.id.score_a);
         TextView scoreB = (TextView) view.findViewById(R.id.score_b);
         Switch liveSwitch = (Switch) view.findViewById(R.id.live_status_switch);
 
@@ -126,7 +152,7 @@ public class AdminMatchListAdapter extends BaseAdapter{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                // Fires every single time the channelReference updates in the Real-time DB
+                // Fires every single time the scorerReference updates in the Real-time DB
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     String playerName = snapshot.child("playerName").getValue().toString();
@@ -134,6 +160,43 @@ public class AdminMatchListAdapter extends BaseAdapter{
 
                     // Correctly maps the number of goals to a scorer
                     goalHashMap.put(playerName, goals);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) { /* BLANK */}
+        });
+
+        // Store all team status into this HashMap to store the correct current data
+
+        teamInfoHashMap = new HashMap<>();
+
+        teamReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                // Fires every single time the scorerReference updates in the Real-time DB
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    int wins = Integer.parseInt(snapshot.child("wins").getValue().toString());
+                    int losses = Integer.parseInt(snapshot.child("losses").getValue().toString());
+                    int draws = Integer.parseInt(snapshot.child("draws").getValue().toString());
+                    int GS = Integer.parseInt(snapshot.child("goalScored").getValue().toString());
+                    int GA = Integer.parseInt(snapshot.child("goalAgainst").getValue().toString());
+                    int GD = Integer.parseInt(snapshot.child("goalDifference").getValue().toString());
+                    int played = Integer.parseInt(snapshot.child("gamesPlayed").getValue().toString());
+                    int pts = Integer.parseInt(snapshot.child("point").getValue().toString());
+
+                    // Correctly maps info to the keys
+                    teamInfoHashMap.put(snapshot.getKey() + "wins", wins);
+                    teamInfoHashMap.put(snapshot.getKey() + "losses", losses);
+                    teamInfoHashMap.put(snapshot.getKey() + "draws", draws);
+                    teamInfoHashMap.put(snapshot.getKey() + "GS", GS);
+                    teamInfoHashMap.put(snapshot.getKey() + "GD", GD);
+                    teamInfoHashMap.put(snapshot.getKey() + "GA", GA);
+                    teamInfoHashMap.put(snapshot.getKey() + "played", played);
+                    teamInfoHashMap.put(snapshot.getKey() + "pts", pts);
 
                 }
             }
@@ -156,10 +219,152 @@ public class AdminMatchListAdapter extends BaseAdapter{
             }
         });
 
+
+        // Edit Game Button - only editable when the game is not LIVE
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: WEEK3 update score dialog
+
+                final boolean[] editedLiveStatus = new boolean[1];
+                editedLiveStatus[0] = adminMatchList.get(position).isLive();
+
+                if(!editedLiveStatus[0]) {
+
+                    final AlertDialog.Builder editBuilder = new AlertDialog.Builder(v.getRootView().getContext());
+                    LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                    View editDialogView = inflater.inflate(R.layout.dialog_edit_match, null);
+
+                    editBuilder.setView(editDialogView);
+                    editBuilder.setTitle("Edit Game Info");
+                    final AlertDialog editDialog = editBuilder.create();
+                    editDialog.show();
+
+                    final EditText editFieldName = (EditText) editDialogView.findViewById(R.id.edit_field_name);
+                    final TextView editMatchDate = (TextView) editDialogView.findViewById(R.id.edit_match_date);
+                    final TextView editMatchTime = (TextView) editDialogView.findViewById(R.id.edit_match_time);
+                    final EditText editTeamA = (EditText) editDialogView.findViewById(R.id.edit_team_A);
+                    final EditText editTeamB = (EditText) editDialogView.findViewById(R.id.edit_team_B);
+                    final EditText editScoreA = (EditText) editDialogView.findViewById(R.id.edit_score_A);
+                    final EditText editScoreB = (EditText) editDialogView.findViewById(R.id.edit_score_B);
+                    final Button editButton = (Button) editDialogView.findViewById(R.id.edit_game_button);
+
+                    editFieldName.setText(adminMatchList.get(position).getFieldName());
+                    editMatchTime.setText(adminMatchList.get(position).getGameTime());
+                    editMatchDate.setText(adminMatchList.get(position).getGameDate());
+                    editTeamA.setText(adminMatchList.get(position).getTeamA());
+                    editTeamB.setText(adminMatchList.get(position).getTeamB());
+                    editScoreA.setText(Integer.toString(adminMatchList.get(position).getScoreA()));
+                    editScoreB.setText(Integer.toString(adminMatchList.get(position).getScoreB()));
+
+                    final String[] editedDate = new String[1];
+                    final String[] editedTime = new String[1];
+                    final String[] editedFieldName = new String[1];
+                    final String[] editedTeamA = new String[1];
+                    final String[] editedTeamB = new String[1];
+                    final int[] editedScoreA = new int[1];
+                    final int[] editedScoreB = new int[1];
+
+
+                    editedTime[0] = adminMatchList.get(position).getGameTime();
+                    editedDate[0] = adminMatchList.get(position).getGameDate();
+                    editedScoreA[0] = adminMatchList.get(position).getScoreA();
+                    editedScoreB[0] = adminMatchList.get(position).getScoreB();
+
+
+                    // Date selector dialog
+
+                    editMatchDate.setOnClickListener(new View.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onClick(View v) {
+                            Calendar calendar = Calendar.getInstance();
+                            int year = calendar.get(Calendar.YEAR);
+                            int month = calendar.get(Calendar.MONTH);
+                            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                            DatePickerDialog dialog = new DatePickerDialog(v.getRootView().getContext(), android.R.style.Theme_Holo_Light_Dialog_MinWidth, dateSetListener, year, month, day);
+                            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            dialog.show();
+                        }
+                    });
+
+                    // Time selector dialog
+
+                    editMatchTime.setOnClickListener(new View.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onClick(View v) {
+
+                            Calendar calendar = Calendar.getInstance();
+                            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                            int min = calendar.get(Calendar.MINUTE);
+
+                            TimePickerDialog timePickerDialog = new TimePickerDialog(v.getRootView().getContext(), timeSetListener, hour, min, true);
+                            timePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            timePickerDialog.show();
+
+                        }
+                    });
+
+                    dateSetListener = new DatePickerDialog.OnDateSetListener() {
+
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            month += 1;
+                            String date = month + "-" + dayOfMonth + "-" + year;
+                            editMatchDate.setText(date);
+
+                            editedDate[0] = date;
+
+                        }
+                    };
+
+                    timeSetListener = new TimePickerDialog.OnTimeSetListener()
+                    {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+                            String time = hourOfDay + " : " + minute;
+                            editMatchTime.setText(time);
+                            editedTime[0] = time;
+
+                        }
+                    };
+
+
+                    editButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            editedFieldName[0] = editFieldName.getText().toString();
+                            editedTeamA[0] = editTeamA.getText().toString();
+                            editedTeamB[0] = editTeamB.getText().toString();
+                            editedScoreA[0] = Integer.parseInt(editScoreA.getText().toString());
+                            editedScoreB[0] = Integer.parseInt(editScoreB.getText().toString());
+
+                            // Game ID Format is date + teamA + teamB
+                            String gameID = editedDate[0] + editedTeamA[0] + editedTeamB[0]; // + gameTime
+
+                            // See if the id is different
+                            if(!adminMatchList.get(position).getId().equalsIgnoreCase(gameID)) {
+                                rootReference.child("Channels").child(firebaseUser.getUid()).child("tournaments").child(adminMatchList.get(position).getTournamentName()).child("games").child(adminMatchList.get(position).getId()).getRef().removeValue();
+                            }
+
+                            // Adds the gameInfo to the Databse
+                            GameInfo gameInfo = new GameInfo(gameID, editedFieldName[0], editedTime[0], editedDate[0], editedTeamA[0], editedTeamB[0], Integer.toString(editedScoreA[0]), Integer.toString(editedScoreB[0]), false, adminMatchList.get(position).getTournamentName());
+                            rootReference.child("Channels").child(firebaseUser.getUid()).child("tournaments").child(adminMatchList.get(position).getTournamentName()).child("games").child(gameID).setValue(gameInfo);
+
+                            // Passes in the tournamentName
+                            //intent.putExtra("tournamentName", tournamentName);
+                            //startActivity(intent);
+
+                            editDialog.dismiss();
+
+                        }
+                    });
+                } else {
+                    Toast.makeText(v.getRootView().getContext(), "You cannot edit a live game.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -223,59 +428,259 @@ public class AdminMatchListAdapter extends BaseAdapter{
                             @Override
                             public void onClick(View v) {
 
-                                String scorer = inputScorer.getText().toString();
+                                final String scorer = inputScorer.getText().toString();
 
                                 // Update score of team A
+
+                                // If the input name is similar to the one already in the scorer list
                                 if(scoredTeam.equalsIgnoreCase(adminMatchList.get(position).getTeamA())) {
 
-                                    final PlayerInfo scorerInfo = new PlayerInfo((inputScorer.getText().toString()) + adminMatchList.get(position).getTeamA(), (inputScorer.getText().toString()), adminMatchList.get(position).getTeamA(), 2);
-                                    int currentScore = adminMatchList.get(position).getScoreA();
-                                    currentScore++;
-                                    gameReference.child("scoreA").setValue(Integer.toString(currentScore));
-                                    gameReference.child("scorers").child(scorer).setValue(scorerInfo);
+                                    if(similarNameExists(goalHashMap, scorer).first) {
 
-                                    // if the scorer is already in the HashMap -> update number of goals
+                                        final AlertDialog.Builder builder2 = new AlertDialog.Builder(v.getRootView().getContext());
+                                        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                                        View dialogView2 = inflater.inflate(R.layout.dialog_select_scorer, null);
+                                        builder2.setView(dialogView2);
+                                        builder2.setTitle("Were you looking for...");
 
-                                    if(goalHashMap.containsKey(scorer)) {
+                                        Button okButton = (Button) dialogView2.findViewById(R.id.ok_button_scorer);
 
-                                        int currentGoal = goalHashMap.get(scorer);
-                                        currentGoal++;
-                                        scorerReference.child(adminMatchList.get(position).getTeamA() + scorer).child("goals").setValue(currentGoal);
+                                        RadioGroup radioGroup = (RadioGroup) dialogView2.findViewById(R.id.radio_group_scorer_select);
+                                        RadioButton scorer1Radio = (RadioButton) dialogView2.findViewById(R.id.scorer1);
+                                        RadioButton scorer2Radio = (RadioButton) dialogView2.findViewById(R.id.scorer2);
+
+                                        scorer1Radio.setText(similarNameExists(goalHashMap, scorer).second);
+
+                                        // Select the right scorer
+
+                                        // Existing Scorer
+                                        scorer1Radio.setOnClickListener(
+                                                new View.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        rightScorer = similarNameExists(goalHashMap, scorer).second;
+                                                        scorerExists = true;
+
+                                                    };
+                                                }
+                                        );
+
+                                        // New Scorer
+                                        scorer2Radio.setOnClickListener(
+                                                new View.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        rightScorer = scorer;
+                                                        scorerExists = false;
+                                                    }
+                                                }
+                                        );
+
+                                        final AlertDialog dialog2 = builder2.create();
+                                        dialog2.show();
+
+                                        okButton.setOnClickListener(
+                                                new View.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(View v) {
+
+                                                        if(scorerExists) {
+
+                                                            int currentGoal = goalHashMap.get(rightScorer);
+                                                            currentGoal++;
+                                                            scorerReference.child(adminMatchList.get(position).getTeamA() + rightScorer).child("goals").setValue(currentGoal);
+
+                                                        } else {
+
+                                                            PlayerInfo newScorer = new PlayerInfo(adminMatchList.get(position).getTeamA() + rightScorer, rightScorer, adminMatchList.get(position).getTeamA(), 1);
+                                                            scorerReference.child(adminMatchList.get(position).getTeamA() + scorer).setValue(newScorer);
+
+                                                        }
+
+                                                        int currentScore = adminMatchList.get(position).getScoreA();
+                                                        currentScore++;
+                                                        gameReference.child("scoreA").setValue(Integer.toString(currentScore));
+
+                                                        // Format for notification message
+
+                                                        tournamentReference.child("notificationTitle").setValue(setNotificationTitle(
+                                                                adminMatchList.get(position).getTeamA(), adminMatchList.get(position).getTeamB(), adminMatchList.get(position).getScoreA() + 1,
+                                                                adminMatchList.get(position).getScoreB(), scorer));
+
+                                                        tournamentReference.child("notificationBody").setValue(setNotificationBody(adminMatchList.get(position).getTeamA(), scorer));
+                                                        tournamentReference.child("currentlyUpdatedGame").setValue(adminMatchList.get(position).getId());
+
+
+                                                        dialog2.dismiss();
+                                                    }
+                                                }
+                                        );
+
+                                        // No similar name exists
 
                                     } else {
 
-                                        // if the scorer is not in the HashMap -> add a new scorer with goal = 1
+                                        final PlayerInfo scorerInfo = new PlayerInfo(scorer + adminMatchList.get(position).getTeamA(), (inputScorer.getText().toString()), adminMatchList.get(position).getTeamA(), 1);
+                                        int currentScore = adminMatchList.get(position).getScoreA();
+                                        currentScore++;
 
-                                        PlayerInfo newScorer = new PlayerInfo(adminMatchList.get(position).getTeamA() + scorer, scorer, adminMatchList.get(position).getTeamA(), 1);
-                                        scorerReference.child(adminMatchList.get(position).getTeamA() + scorer).setValue(newScorer);
+                                        gameReference.child("scoreA").setValue(Integer.toString(currentScore));
+
+                                        gameReference.child("scorers").child(scorer).setValue(scorerInfo);
+
+                                        // if the scorer is already in the HashMap -> update number of goals
+
+                                        if(goalHashMap.containsKey(scorer)) {
+
+                                            int currentGoal = goalHashMap.get(scorer);
+                                            currentGoal++;
+                                            scorerReference.child(adminMatchList.get(position).getTeamA() + scorer).child("goals").setValue(currentGoal);
+
+                                        } else {
+
+                                            // if the scorer is not in the HashMap -> add a new scorer with goal = 1
+
+                                            PlayerInfo newScorer = new PlayerInfo(adminMatchList.get(position).getTeamA() + scorer, scorer, adminMatchList.get(position).getTeamA(), 1);
+                                            scorerReference.child(adminMatchList.get(position).getTeamA() + scorer).setValue(newScorer);
+                                        }
+
+                                        tournamentReference.child("notificationTitle").setValue(setNotificationTitle(
+                                                adminMatchList.get(position).getTeamA(), adminMatchList.get(position).getTeamB(), adminMatchList.get(position).getScoreA() + 1,
+                                                adminMatchList.get(position).getScoreB(), scorer));
+
+                                        tournamentReference.child("notificationBody").setValue(setNotificationBody(adminMatchList.get(position).getTeamA(), scorer));
+                                        tournamentReference.child("currentlyUpdatedGame").setValue(adminMatchList.get(position).getId());
+
                                     }
+
 
                                     // Update score of teamB
 
                                 } else if(scoredTeam.equalsIgnoreCase(adminMatchList.get(position).getTeamB())) {
 
-                                    final PlayerInfo scorerInfo = new PlayerInfo((inputScorer.getText().toString()) + adminMatchList.get(position).getTeamB(), (inputScorer.getText().toString()), adminMatchList.get(position).getTeamB(), 1);
-                                    int currentScore = adminMatchList.get(position).getScoreB();
-                                    currentScore++;
-                                    gameReference.child("scoreB").setValue(Integer.toString(currentScore));
-                                    gameReference.child("scorers").child(scorer).setValue(scorerInfo);
+                                    // If the input name is similar to the one already in the scorer list
 
-                                    // if the scorer is already in the HashMap -> update number of goals
+                                    if(similarNameExists(goalHashMap, scorer).first) {
 
-                                    if(goalHashMap.containsKey(scorer)) {
+                                        final AlertDialog.Builder builder2 = new AlertDialog.Builder(v.getRootView().getContext());
+                                        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                                        View dialogView2 = inflater.inflate(R.layout.dialog_select_scorer, null);
+                                        builder2.setView(dialogView2);
+                                        builder2.setTitle("Were you looking for...");
 
-                                        int currentGoal = goalHashMap.get(scorer);
-                                        currentGoal++;
-                                        scorerReference.child(adminMatchList.get(position).getTeamB() + scorer).child("goals").setValue(currentGoal);
+                                        Button okButton = (Button) dialogView2.findViewById(R.id.ok_button_scorer);
 
+                                        RadioGroup radioGroup = (RadioGroup) dialogView2.findViewById(R.id.radio_group_scorer_select);
+                                        RadioButton scorer1Radio = (RadioButton) dialogView2.findViewById(R.id.scorer1);
+                                        RadioButton scorer2Radio = (RadioButton) dialogView2.findViewById(R.id.scorer2);
+
+                                        scorer1Radio.setText(similarNameExists(goalHashMap, scorer).second);
+
+                                        // Select the right scorer
+
+                                        // Existing Scorer
+                                        scorer1Radio.setOnClickListener(
+                                                new View.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        rightScorer = similarNameExists(goalHashMap, scorer).second;
+                                                        scorerExists = true;
+
+                                                    };
+                                                }
+                                        );
+
+                                        // New Scorer
+                                        scorer2Radio.setOnClickListener(
+                                                new View.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        rightScorer = scorer;
+                                                        scorerExists = false;
+
+                                                    }
+                                                }
+                                        );
+
+                                        final AlertDialog dialog2 = builder2.create();
+                                        dialog2.show();
+
+                                        okButton.setOnClickListener(
+                                                new View.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(View v) {
+
+                                                        if(scorerExists) {
+
+                                                            int currentGoal = goalHashMap.get(rightScorer);
+                                                            currentGoal++;
+                                                            scorerReference.child(adminMatchList.get(position).getTeamB() + rightScorer).child("goals").setValue(currentGoal);
+
+                                                        } else {
+
+                                                            PlayerInfo newScorer = new PlayerInfo(adminMatchList.get(position).getTeamB() + rightScorer, rightScorer, adminMatchList.get(position).getTeamB(), 1);
+                                                            scorerReference.child(adminMatchList.get(position).getTeamB() + scorer).setValue(newScorer);
+
+                                                        }
+
+                                                        int currentScore = adminMatchList.get(position).getScoreB();
+                                                        currentScore++;
+                                                        gameReference.child("scoreB").setValue(Integer.toString(currentScore));
+
+                                                        tournamentReference.child("notificationTitle").setValue(setNotificationTitle(
+                                                                adminMatchList.get(position).getTeamA(), adminMatchList.get(position).getTeamB(), adminMatchList.get(position).getScoreA(),
+                                                                adminMatchList.get(position).getScoreB() + 1, scorer));
+
+                                                        tournamentReference.child("notificationBody").setValue(setNotificationBody(adminMatchList.get(position).getTeamB(), scorer));
+                                                        tournamentReference.child("currentlyUpdatedGame").setValue(adminMatchList.get(position).getId());
+
+
+                                                        dialog2.dismiss();
+                                                    }
+                                                }
+                                        );
+
+
+                                        // No similar name exists
                                     } else {
 
-                                        // if the scorer is not in the HashMap -> add a new scorer with goal = 1
+                                        final PlayerInfo scorerInfo = new PlayerInfo(scorer + adminMatchList.get(position).getTeamB(), (inputScorer.getText().toString()), adminMatchList.get(position).getTeamB(), 1);
+                                        int currentScore = adminMatchList.get(position).getScoreB();
+                                        currentScore++;
+                                        gameReference.child("scoreB").setValue(Integer.toString(currentScore));
 
-                                        PlayerInfo newScorer = new PlayerInfo(adminMatchList.get(position).getTeamB() + scorer, scorer, adminMatchList.get(position).getTeamB(), 1);
-                                        scorerReference.child(adminMatchList.get(position).getTeamB() + scorer).setValue(newScorer);
+                                        gameReference.child("scorers").child(scorer).setValue(scorerInfo);
+
+                                        // if the scorer is already in the HashMap -> update number of goals
+
+                                        if(goalHashMap.containsKey(scorer)) {
+
+                                            int currentGoal = goalHashMap.get(scorer);
+                                            currentGoal++;
+                                            scorerReference.child(adminMatchList.get(position).getTeamB() + scorer).child("goals").setValue(currentGoal);
+
+                                        } else {
+
+                                            // if the scorer is not in the HashMap -> add a new scorer with goal = 1
+
+                                            PlayerInfo newScorer = new PlayerInfo(adminMatchList.get(position).getTeamB() + scorer, scorer, adminMatchList.get(position).getTeamB(), 1);
+                                            scorerReference.child(adminMatchList.get(position).getTeamB() + scorer).setValue(newScorer);
+                                        }
+
+                                        tournamentReference.child("notificationTitle").setValue(setNotificationTitle(
+                                                adminMatchList.get(position).getTeamA(), adminMatchList.get(position).getTeamB(), adminMatchList.get(position).getScoreA(),
+                                                adminMatchList.get(position).getScoreB() + 1, scorer));
+
+                                        tournamentReference.child("notificationBody").setValue(setNotificationBody(adminMatchList.get(position).getTeamB(), scorer));
+                                        tournamentReference.child("currentlyUpdatedGame").setValue(adminMatchList.get(position).getId());
+
                                     }
-
                                 }
 
                                 dialog.dismiss();
@@ -299,14 +704,89 @@ public class AdminMatchListAdapter extends BaseAdapter{
                 liveReference.setValue(false);
                 gamesReference.child(gameID).child("gameTime").setValue("FT");
                 gameTime.setText("FT");
+
+                // Update League Table
+
+                // If team A won
+                if (adminMatchList.get(position).getScoreA() > adminMatchList.get(position).getScoreB()) {
+
+                    String teamA = adminMatchList.get(position).getTeamA();
+                    String teamB = adminMatchList.get(position).getTeamB();
+                    int scoreA = adminMatchList.get(position).getScoreA();
+                    int scoreB = adminMatchList.get(position).getScoreB();
+
+                    // Update Team A
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("wins").setValue((teamInfoHashMap.get(teamA + "wins")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("gamesPlayed").setValue((teamInfoHashMap.get(teamA + "played")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("goalScored").setValue((teamInfoHashMap.get(teamA + "GS")) + scoreA);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("goalAgainst").setValue((teamInfoHashMap.get(teamA + "GA")) + scoreB);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("goalDifference").setValue(teamInfoHashMap.get(teamA + "GD")  + (scoreA - scoreB));
+
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("point").setValue((teamInfoHashMap.get(teamA + "pts")) + 3);
+
+                    // Update Team B
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("losses").setValue((teamInfoHashMap.get(teamB + "losses")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("gamesPlayed").setValue((teamInfoHashMap.get(teamB + "played")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("goalScored").setValue((teamInfoHashMap.get(teamB + "GS")) + scoreB);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("goalAgainst").setValue((teamInfoHashMap.get(teamB + "GA")) + scoreA);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("goalDifference").setValue(teamInfoHashMap.get(teamB + "GD")  + (scoreB - scoreA));
+
+                } else if(adminMatchList.get(position).getScoreA() < adminMatchList.get(position).getScoreB()) {
+
+                    // team B won
+                    String teamA = adminMatchList.get(position).getTeamA();
+                    String teamB = adminMatchList.get(position).getTeamB();
+                    int scoreA = adminMatchList.get(position).getScoreA();
+                    int scoreB = adminMatchList.get(position).getScoreB();
+
+                    // Update Team A
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("losses").setValue((teamInfoHashMap.get(teamA + "losses")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("gamesPlayed").setValue((teamInfoHashMap.get(teamA + "played")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("goalScored").setValue((teamInfoHashMap.get(teamA + "GS")) + scoreA);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("goalAgainst").setValue((teamInfoHashMap.get(teamA + "GA")) + scoreB);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("goalDifference").setValue(teamInfoHashMap.get(teamA + "GD")  + (scoreA - scoreB));
+
+                    // Update Team B
+
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("wins").setValue((teamInfoHashMap.get(teamB + "wins")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("gamesPlayed").setValue((teamInfoHashMap.get(teamB + "played")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("goalScored").setValue((teamInfoHashMap.get(teamB + "GS")) + scoreB);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("goalAgainst").setValue((teamInfoHashMap.get(teamB + "GA")) + scoreA);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("goalDifference").setValue(teamInfoHashMap.get(teamB + "GD")  + (scoreB - scoreA));
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("point").setValue((teamInfoHashMap.get(teamB + "pts")) + 3);
+
+                } else if(adminMatchList.get(position).getScoreA() == adminMatchList.get(position).getScoreB()) {
+
+                    // If game is tied
+                    String teamA = adminMatchList.get(position).getTeamA();
+                    String teamB = adminMatchList.get(position).getTeamB();
+                    int scoreA = adminMatchList.get(position).getScoreA();
+                    int scoreB = adminMatchList.get(position).getScoreB();
+
+                    // Update Team A
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("draws").setValue((teamInfoHashMap.get(teamA + "draws")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("gamesPlayed").setValue((teamInfoHashMap.get(teamA + "played")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("goalScored").setValue((teamInfoHashMap.get(teamA + "GS")) + scoreA);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("goalAgainst").setValue((teamInfoHashMap.get(teamA + "GA")) + scoreB);
+                    teamReference.child(adminMatchList.get(position).getTeamA()).child("point").setValue((teamInfoHashMap.get(teamA + "pts")) + 1);
+
+                    // Update Team B
+
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("draws").setValue((teamInfoHashMap.get(teamB + "draws")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("gamesPlayed").setValue((teamInfoHashMap.get(teamB + "played")) + 1);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("goalScored").setValue((teamInfoHashMap.get(teamB + "GS")) + scoreB);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("goalAgainst").setValue((teamInfoHashMap.get(teamB + "GA")) + scoreA);
+                    teamReference.child(adminMatchList.get(position).getTeamB()).child("point").setValue((teamInfoHashMap.get(teamB + "pts")) + 1);
+
+                }
             }
-        });
+         });
 
         // Set Texts for TextViews
 
         fieldName.setText(adminMatchList.get(position).getFieldName());
         gameTime.setText(adminMatchList.get(position).getGameTime());
-        gameDate.setText(adminMatchList.get(position).getGameDate());
+        gameDate[0].setText(adminMatchList.get(position).getGameDate());
         teamA.setText(adminMatchList.get(position).getTeamA());
         teamB.setText(adminMatchList.get(position).getTeamB());
         scoreA.setText(Integer.toString(adminMatchList.get(position).getScoreA()));
@@ -350,4 +830,44 @@ public class AdminMatchListAdapter extends BaseAdapter{
         });
         return view;
     }
+
+    /*
+    * This function checks whether a similar name exists in the scorer database
+    */
+    private Pair<Boolean, String> similarNameExists(HashMap<String, Integer> scorerHashMap, String inputName) {
+
+        Iterator it = scorerHashMap.entrySet().iterator();
+        while(it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+
+            // If the inputName is similar to one of the names in the database (or HashMap that contains the info of the DB)
+            if(LevenshteinDistance.similarity((String) pair.getKey(), inputName) >= 0.46
+
+                    // 0.46 because it has been tested in the Unit Test that 0.46 is appropriate for most seemingly similar names
+                    // and disregard same names
+                    && (!((String)pair.getKey()).equalsIgnoreCase(inputName))) {
+
+                return new Pair<>(true, (String) pair.getKey());
+            }
+        }
+        return new Pair<>(false, inputName);
+    }
+
+    /**
+     * Following two functions is a String formatter for
+     * the notifications sent out to the client users
+     * when the game score is updated.
+     */
+
+    private String setNotificationTitle(String teamA, String teamB, int scoreA, int scoreB, String scorer) {
+
+        return "[ " + scorer + " ] " + teamA + " " + scoreA + " : " + scoreB + " " + teamB;
+
+    }
+
+    private String setNotificationBody(String team, String scorer) {
+
+        return "Goal by " + scorer + " (" + team + ") " + "!";
+    }
+
 }

@@ -99,7 +99,7 @@ public class AdminLoginActivity extends AppCompatActivity {
                         if(task.isSuccessful()) {
                             // start new activity
                             finish();
-                            Intent successIntent = new Intent(AdminLoginActivity.this, AdminTournamentListActivity.class);
+                            Intent successIntent = new Intent(AdminLoginActivity.this, EditAdminActivity.class);
                             startActivity(successIntent);
 
                         } else {

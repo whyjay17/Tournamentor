@@ -31,7 +31,7 @@
             <group android:checkableBehavior="single"
                 android:id="@+id/nav_settings_group">
                 <item
-                    android:id="@+id/nav_refresh"
+                    android:id="@+id/nav_reset"
                     android:icon="@mipmap/refresh_icon"
                     android:title="Refresh Setting" />
                 <item

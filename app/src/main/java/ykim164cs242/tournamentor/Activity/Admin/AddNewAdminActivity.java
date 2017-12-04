@@ -98,6 +98,8 @@ public class AddNewAdminActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
     /**
@@ -142,7 +144,7 @@ public class AddNewAdminActivity extends AppCompatActivity {
                             AdminUserInfo adminUserInfo = new AdminUserInfo(adminID, adminEmail, channelName);
                             ChannelInfo channelInfo = new ChannelInfo(channelName, dateInString);
 
-                            Intent successIntent = new Intent(AddNewAdminActivity.this, AdminTournamentListActivity.class);
+                            Intent successIntent = new Intent(AddNewAdminActivity.this, EditAdminActivity.class);
 
                             successIntent.putExtra("channelID", adminID);
                             rootReference.child("Channels").child(adminID).setValue(channelInfo);

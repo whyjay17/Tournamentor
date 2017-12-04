@@ -120,7 +120,9 @@ public class MatchListAdapter extends BaseAdapter{
 
        if(matchList.get(position).isStarred()) {
            starred.setColorFilter(Color.argb(255, 255, 214, 51));
-       } else { }
+       } else {
+           starred.setColorFilter(Color.argb(255, 255, 255, 255)); // White
+       }
 
         starredGameList = new ArrayList<>();
 
@@ -161,7 +163,7 @@ public class MatchListAdapter extends BaseAdapter{
     }
 
     // random String generator for adding a dummy data for refreshing the real-time DB
-    protected String generateRandomString() {
+    public static String generateRandomString() {
 
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();

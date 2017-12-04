@@ -13,9 +13,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ykim164cs242.tournamentor.Fragments.Client.LeagueTableFragment;
 import ykim164cs242.tournamentor.ListItem.LeagueTableItem;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.ListItem.ScoreTableItem;
+import ykim164cs242.tournamentor.Utils.LevenshteinDistance;
 
 import static org.junit.Assert.*;
 
@@ -33,7 +35,188 @@ public class ExampleUnitTest {
 
 
     /**
-     * sortScoreTableTest tests whether the sortScoreTable function properly
+     * stringSimilarityTest tests whether two given names are similar
+     */
+    @Test
+    public void stringSimilarityTest() throws Exception {
+
+        String name1 = "Steve";
+        String name2 = "stev";
+
+        // Add 5 players
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        // Player 2 is on the top rank
+        assertTrue(similarity >= 0.46);
+    }
+
+    /**
+     * stringSimilarityTest tests whether two given names are similar
+     */
+    @Test
+    public void stringSimilarityTestWithLastName() throws Exception {
+
+        String name1 = "yongjin kim";
+        String name2 = "yongjin";
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        assertTrue(similarity >= 0.60);
+    }
+
+
+    /**
+     * stringSimilarityTest tests whether two given names are similar
+     */
+    @Test
+    public void stringSimilarityTestWithSameLastName() throws Exception {
+
+        String name1 = "bob wilson";
+        String name2 = "steve wilson";
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        assertTrue(similarity >= 0.55);
+    }
+
+    /**
+     * stringSimilarityTest tests whether two given names are similar
+     */
+    @Test
+    public void stringSimilarityTestWithSameFirstName() throws Exception {
+
+        String name1 = "Collin williams";
+        String name2 = "Collin Jackson";
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        assertTrue(similarity >= 0.46);
+    }
+
+    /**
+     * stringSimilarityTest tests whether two given names are similar
+     */
+    @Test
+    public void stringSimilarityTestWithSameNameDifferentCase() throws Exception {
+
+        String name1 = "Bryan";
+        String name2 = "brYan";
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        assertTrue(similarity >= 0.46);
+    }
+
+    /**
+     * stringSimilarityTest tests whether two given names are similar
+     */
+    @Test
+    public void stringSimilarityTestWithSameFirstName2() throws Exception {
+
+        String name1 = "Sean Kim";
+        String name2 = "Sean Liu";
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        assertTrue(similarity >= 0.46);
+    }
+
+    /**
+     * stringSimilarityTest tests whether two different names
+     */
+    @Test
+    public void stringSimilarityTestWithDifferentNames() throws Exception {
+
+        String name1 = "Jack Black";
+        String name2 = "Kate Winslet";
+
+        // Add 5 players
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        // Player 2 is on the top rank
+        assertTrue(similarity <= 0.46);
+    }
+
+    /**
+     * stringSimilarityTest tests whether two different names
+     */
+    @Test
+    public void stringSimilarityTestSameNameNoSpace() throws Exception {
+
+        String name1 = "yongjinkim";
+        String name2 = "yong jin kim";
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        assertTrue(similarity >= 0.46);
+    }
+
+    /**
+     * equalStringSimilarityTest tests whether two given names have similarity of 100%
+     */
+    @Test
+    public void equalStringSimilarityTest() throws Exception {
+
+        String name1 = "Steve";
+        String name2 = "Steve";
+
+        double similarity = LevenshteinDistance.similarity(name1, name2);
+
+        assertTrue(similarity == 1.0);
+    }
+
+    /**
+     * sortLeagueTableTestSamePointsDifferentGoals tests whether the sortLeagueTable function properly
+     * sorts the table based on Points and GoalDifference in descending order.
+     */
+    @Test
+    public void sortLeagueTableTestSamePointsDifferentGoals() throws Exception {
+
+        leagueTableItems = new ArrayList<LeagueTableItem>();
+
+        // Last two are goalDifference and Points respectively
+
+        leagueTableItems.add(new LeagueTableItem(0, "Team A", 3, 3, 3, 3, 3, 3, 3, 3));
+        leagueTableItems.add(new LeagueTableItem(0, "Team B", 3, 3, 3, 3, 3, 3, 9, 3));
+        leagueTableItems.add(new LeagueTableItem(0, "Team C", 3, 3, 3, 3, 3, 3, -8, 5));
+        leagueTableItems.add(new LeagueTableItem(0, "Team D", 3, 3, 3, 3, 3, 3, 2, 1));
+
+        LeagueTableFragment.sortLeagueTable(leagueTableItems);
+
+        assertTrue(leagueTableItems.get(0).getTeamName().equalsIgnoreCase("Team C"));
+
+        assertTrue(leagueTableItems.get(3).getTeamName().equalsIgnoreCase("Team D"));
+    }
+
+    /**
+     * sortLeagueTableTestSamePointsDifferentGoals tests whether the sortLeagueTable function properly
+     * sorts the table based on Points and GoalDifference in descending order.
+     */
+    @Test
+    public void sortLeagueTableTestSamePointsDifferentGoals2() throws Exception {
+
+        leagueTableItems = new ArrayList<LeagueTableItem>();
+
+        // Last two are goalDifference and Points respectively
+
+        leagueTableItems.add(new LeagueTableItem(0, "Team A", 3, 3, 3, 3, 3, 3, -3, 3));
+        leagueTableItems.add(new LeagueTableItem(0, "Team B", 3, 3, 3, 3, 3, 3, 9, 3));
+        leagueTableItems.add(new LeagueTableItem(0, "Team C", 3, 3, 3, 3, 3, 3, -8, 5));
+        leagueTableItems.add(new LeagueTableItem(0, "Team D", 3, 3, 3, 3, 3, 3, 2, 5));
+
+        LeagueTableFragment.sortLeagueTable(leagueTableItems);
+
+        assertTrue(leagueTableItems.get(0).getTeamName().equalsIgnoreCase("Team D"));
+
+        assertTrue(leagueTableItems.get(3).getTeamName().equalsIgnoreCase("Team A"));
+    }
+
+    /////////////////////////////////////////////////////////////// Week 2 Tests Below //////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * sortScoreTableTestUpgrade tests whether the sortScoreTable function properly
      * sorts the table based on the number of goals in descending order.
      */
     @Test
@@ -222,6 +405,7 @@ public class ExampleUnitTest {
             }
         });
     }
+
 
 
 }

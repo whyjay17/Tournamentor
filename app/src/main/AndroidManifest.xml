@@ -54,6 +54,9 @@
         <activity android:name=".Activity.Admin.AdminTournamentMenuActivity">
 
         </activity>
+        <activity android:name=".Activity.Admin.EditAdminActivity">
+
+        </activity>
         <activity android:name=".Activity.Admin.AdminMatchListActivity">
 
         </activity>

@@ -16,6 +16,7 @@ public class TournamentInfo {
     private List<TeamInfo> teams;
     private List<GameInfo> games;
 
+
     public TournamentInfo(String name, String term, List<TeamInfo> teams, List<GameInfo> games) {
         this.name = name;
         this.term = term;

@@ -22,7 +22,8 @@ public class GameInfo {
     private PlayerInfo[] scorers;
 
     private String winner;
-
+    private String notificationTitle;
+    private String notificationBody;
 
     public GameInfo(String ID, String fieldName, String gameTime, String gameDate, String teamA, String teamB, String scoreA, String scoreB, boolean isLive, String tournamentName) {
         this.ID = ID;
@@ -40,6 +41,23 @@ public class GameInfo {
 
     public GameInfo(String ID) {
         this.ID = ID;
+    }
+
+    public GameInfo(String ID, String fieldName, String gameTime, String gameDate, String teamA, String teamB, String scoreA, String scoreB, boolean isLive, String tournamentName, PlayerInfo[] scorers, String winner, String notificationTitle, String notificationBody) {
+        this.ID = ID;
+        this.fieldName = fieldName;
+        this.gameTime = gameTime;
+        this.gameDate = gameDate;
+        this.teamA = teamA;
+        this.teamB = teamB;
+        this.scoreA = scoreA;
+        this.scoreB = scoreB;
+        this.isLive = isLive;
+        this.tournamentName = tournamentName;
+        this.scorers = scorers;
+        this.winner = winner;
+        this.notificationTitle = notificationTitle;
+        this.notificationBody = notificationBody;
     }
 
     public String getID() {

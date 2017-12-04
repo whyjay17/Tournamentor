@@ -127,6 +127,8 @@ public class LeagueTableFragment extends Fragment {
                     int losses = Integer.parseInt(snapshot.child("losses").getValue().toString());
                     int goalScored = Integer.parseInt(snapshot.child("goalScored").getValue().toString());
                     int goalAgainst = Integer.parseInt(snapshot.child("goalAgainst").getValue().toString());
+                    int goalDifference = Integer.parseInt(snapshot.child("goalDifference").getValue().toString());
+                    int point = Integer.parseInt(snapshot.child("point").getValue().toString());
 
                     teamNameList.add(snapshot.child("teamName").getValue().toString());
                     rankList.add(0);
@@ -136,8 +138,8 @@ public class LeagueTableFragment extends Fragment {
                     lossesList.add(losses);
                     goalScoredList.add(goalScored);
                     goalAgainstList.add(goalAgainst);
-                    goalDifferenceList.add(goalScored - goalAgainst);
-                    pointsList.add(computePoints(wins, draws, losses)); //(Integer.parseInt(snapshot.child("point").getValue().toString()));
+                    goalDifferenceList.add(goalDifference);
+                    pointsList.add(point); //(Integer.parseInt(snapshot.child("point").getValue().toString()));
                 }
 
                 List<LeagueTableItem> tempLeagueTableItem = new ArrayList<LeagueTableItem>();
@@ -155,10 +157,10 @@ public class LeagueTableFragment extends Fragment {
 
                 int currRank = 1;
 
-                for(LeagueTableItem p : tempLeagueTableItem) {
-                    leagueTableItemList.add(new LeagueTableItem(currRank, p.getTeamName(), p.getGamesPlayed(), p.getWins(), p.getDraws(), p.getLosses(), p.getGoalScored(), p.getGoalAgasint(), p.getGoalDifference(), p.getPoints()));
-                    currRank++;
-                }
+               for(LeagueTableItem p : tempLeagueTableItem) {
+                   leagueTableItemList.add(new LeagueTableItem(currRank, p.getTeamName(), p.getGamesPlayed(), p.getWins(), p.getDraws(), p.getLosses(), p.getGoalScored(), p.getGoalAgasint(), p.getGoalDifference(), p.getPoints()));
+                   currRank++;
+               }
 
                 adapter.notifyDataSetChanged();
 
@@ -171,20 +173,20 @@ public class LeagueTableFragment extends Fragment {
         });
     }
 
-    public int computePoints(int wins, int draws, int losses) {
-
-        return (3 * wins) + (1 * draws);
-
-    }
-
     /**
      * sortLeagueTable sorts the LeagueTableItem object
      * based on one of its fields (points in this case).
+     * If the points are equal, it then sorts based on
+     * the goalDifference.
      */
-    public void sortLeagueTable(List<LeagueTableItem> table) {
+    public static void sortLeagueTable(List<LeagueTableItem> table) {
         Collections.sort(table, new Comparator<LeagueTableItem>(){
             public int compare(LeagueTableItem o1, LeagueTableItem o2){
-                return o2.getPoints() - o1.getPoints();
+                int pts = o2.getPoints() - o1.getPoints();
+                if(o2.getPoints() == o1.getPoints()) {
+                    return (-1 * o1.getGoalDifference()) - (-1 * o2.getGoalDifference());
+                }
+                return pts;
             }
         });
     }

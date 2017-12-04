@@ -14,7 +14,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,6 +33,8 @@ import ykim164cs242.tournamentor.Fragments.Client.LiveMatchListTab;
 import ykim164cs242.tournamentor.Fragments.Client.MatchListTab;
 import ykim164cs242.tournamentor.Fragments.Client.StandingsTab;
 import ykim164cs242.tournamentor.Fragments.Client.StarredMatchListTab;
+import ykim164cs242.tournamentor.InformationStorage.ClientUserInfo;
+import ykim164cs242.tournamentor.ListItem.TeamListItem;
 import ykim164cs242.tournamentor.R;
 
 /**
@@ -49,6 +57,7 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
     DatabaseReference rootReference = FirebaseDatabase.getInstance().getReference();
     DatabaseReference channelsReference;
     DatabaseReference tournamentReference;
+    DatabaseReference userReference;
 
     // Passed-in data from the SelectChannel Activity. Will be used to reach the right database reference
 
@@ -74,6 +83,7 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
 
         channelsReference = rootReference.child("Channels").child(passedInChannelID);
         tournamentReference = channelsReference.child("tournaments").child(passedInTournamentName);
+        userReference = rootReference.child("Users").child(passedInDeviceID);
 
         // Fragment Manager for TabLayout
 
@@ -172,6 +182,228 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
             AlertDialog dialog = builder.create();
             dialog.show();
 
+
+        } else if (id == R.id.nav_notification) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(ClientMainActivity.this);
+            View dialogView = getLayoutInflater().inflate(R.layout.dialog_notification_settings, null);
+            builder.setTitle("Notification Setting");
+            builder.setView(dialogView);
+            final AlertDialog dialog = builder.create();
+            dialog.show();
+
+            RadioGroup radioGroup = (RadioGroup) dialogView.findViewById(R.id.radio_group_notification);
+            final RadioButton noneRadio = (RadioButton) dialogView.findViewById(R.id.no_noti_radio);
+            final RadioButton allMatchRadio = (RadioButton) dialogView.findViewById(R.id.all_match_radio);
+            final RadioButton followedMatchRadio = (RadioButton) dialogView.findViewById(R.id.followed_match_radio);
+
+            final Switch headerSwitch = (Switch) dialogView.findViewById(R.id.header_notification_switch);
+            final Switch vibrationSwitch = (Switch) dialogView.findViewById(R.id.vibration_switch);
+            final Switch soundSwitch = (Switch) dialogView.findViewById(R.id.sound_switch);
+
+            Button submitNotificationButton = (Button) dialogView.findViewById(R.id.noti_button_submit);
+
+            // Handle current notification Setting = sync with database
+
+            userReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    // If no notification is selected
+                    if(!(boolean)dataSnapshot.child("allMatchNotification").getValue() &&
+                            !(boolean)dataSnapshot.child("followedMatchNotification").getValue()) {
+                        noneRadio.setChecked(true);
+
+                    } else {
+                        noneRadio.setChecked(false);
+                        headerSwitch.setClickable(true);
+                        soundSwitch.setClickable(true);
+                        vibrationSwitch.setClickable(true);
+                    }
+
+                    // sync with database
+                    if((boolean)dataSnapshot.child("allMatchNotification").getValue()) {
+                        allMatchRadio.setChecked(true);
+                    } else {
+                        allMatchRadio.setChecked(false);
+                    }
+
+                    if((boolean)dataSnapshot.child("followedMatchNotification").getValue()) {
+                        followedMatchRadio.setChecked(true);
+                    } else {
+                        followedMatchRadio.setChecked(false);
+                    }
+
+                    if((boolean)dataSnapshot.child("popUpOn").getValue()) {
+                        headerSwitch.setChecked(true);
+                    } else {
+                        headerSwitch.setChecked(false);
+                    }
+
+                    if((boolean)dataSnapshot.child("vibrationOn").getValue()) {
+                        vibrationSwitch.setChecked(true);
+                    } else {
+                        vibrationSwitch.setChecked(false);
+                    }
+
+                    if((boolean)dataSnapshot.child("soundOn").getValue()) {
+                        soundSwitch.setChecked(true);
+                    } else {
+                        soundSwitch.setChecked(false);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            // Select notification options
+
+            noneRadio.setOnClickListener(
+                    new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+
+                            // change user setting on DB
+                            userReference.child("allMatchNotification").setValue(false);
+                            userReference.child("followedMatchNotification").setValue(false);
+                            userReference.child("popUpOn").setValue(false);
+                            userReference.child("vibrationOn").setValue(false);
+                            userReference.child("soundOn").setValue(false);
+
+                        };
+                    }
+            );
+
+            allMatchRadio.setOnClickListener(
+                    new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+
+                            // change user setting on DB
+                            userReference.child("allMatchNotification").setValue(true);
+                            userReference.child("followedMatchNotification").setValue(false);
+
+                        };
+                    }
+            );
+
+            followedMatchRadio.setOnClickListener(
+                    new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+
+                            // change user setting on DB
+                            userReference.child("followedMatchNotification").setValue(true);
+                            userReference.child("allMatchNotification").setValue(false);
+
+                        }
+                    }
+            );
+
+            // Select notification types
+
+            headerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if(noneRadio.isChecked()) {
+                        Toast.makeText(getBaseContext(), "Turn on the notification first", Toast.LENGTH_SHORT).show();
+                        headerSwitch.setChecked(false);
+
+                    } else {
+                        if(isChecked) {
+
+                            // set vibrationSwitch notification to true on DB
+                            userReference.child("popUpOn").setValue(true);
+
+                        } else {
+
+                            // set vibrationSwitch notification to false on DB
+                            userReference.child("popUpOn").setValue(false);
+
+                        }
+                    }
+
+
+                }
+            });
+
+            vibrationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if(noneRadio.isChecked()) {
+                        Toast.makeText(getBaseContext(), "Turn on the notification first", Toast.LENGTH_SHORT).show();
+                        vibrationSwitch.setChecked(false);
+
+                    } else {
+                        if(isChecked) {
+
+                            // set vibrationSwitch notification to true on DB
+                            userReference.child("vibrationOn").setValue(true);
+
+                        } else {
+
+                            // set vibrationSwitch notification to false on DB
+                            userReference.child("vibrationOn").setValue(false);
+
+                        }
+                    }
+
+                }
+            });
+
+            soundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if(noneRadio.isChecked()) {
+                        Toast.makeText(getBaseContext(), "Turn on the notification first", Toast.LENGTH_SHORT).show();
+                        soundSwitch.setChecked(false);
+
+                    } else {
+                        if(isChecked) {
+
+                            // set vibrationSwitch notification to true on DB
+                            userReference.child("soundOn").setValue(true);
+
+                        } else {
+
+                            // set vibrationSwitch notification to false on DB
+                            userReference.child("soundOn").setValue(false);
+
+                        }
+                    }
+                }
+            });
+
+            submitNotificationButton.setOnClickListener(
+                    new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+
+                            dialog.dismiss();
+
+                        }
+                    }
+            );
+
+        } else if(id == R.id.nav_reset) {
+
+            final ClientUserInfo clientUserInfo =  new ClientUserInfo(passedInDeviceID, null);
+            DatabaseReference userReference = rootReference.child("Users");
+
+            // Add new userInfo with resetted info
+
+            rootReference.child("Users").child(passedInDeviceID).child("starredGames").getRef().removeValue();
 
         } else if (id == R.id.nav_info) {
 
