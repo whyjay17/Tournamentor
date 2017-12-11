@@ -27,7 +27,7 @@ import ykim164cs242.tournamentor.ListItem.TournamentListItem;
 import ykim164cs242.tournamentor.R;
 
 /**
- * TeamListActivity represents a screen of displaying participating teams of the tournament.
+ * ClientTournamentListActivity represents a screen of displaying participating teams of the tournament.
  * The team information is fetched from the Firebase real-time database and displayed
  * in the ListView of the teams.
  */

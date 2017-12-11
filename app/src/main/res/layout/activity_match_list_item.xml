@@ -89,7 +89,9 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.7"
                     android:gravity="center"
+                    android:textColor="#FFCA18"
                     android:text="Score A"
+
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     app:layout_constraintLeft_toRightOf="@+id/team_a"
@@ -121,6 +123,7 @@
                     android:layout_weight=".7"
                     android:gravity="center"
                     android:text="Score B"
+                    android:textColor="#FFCA18"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
                     app:layout_constraintLeft_toRightOf="@+id/team_b"

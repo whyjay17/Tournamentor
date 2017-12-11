@@ -1,13 +1,23 @@
 package ykim164cs242.tournamentor.Fragments.Client;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,7 +29,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import ykim164cs242.tournamentor.Activity.Admin.EditAdminActivity;
 import ykim164cs242.tournamentor.Activity.Client.ClientMainActivity;
+import ykim164cs242.tournamentor.Activity.Common.StartMenuActivity;
 import ykim164cs242.tournamentor.Adapter.Client.LeagueStandingListAdapter;
 import ykim164cs242.tournamentor.Adapter.Client.TeamListAdapter;
 import ykim164cs242.tournamentor.ListItem.LeagueTableItem;
@@ -89,6 +101,59 @@ public class LeagueTableFragment extends Fragment {
 
         adapter = new LeagueStandingListAdapter(getContext(), leagueTableItemList);
         leagueTableListView.setAdapter(adapter);
+
+        // Refresh by clicking
+        leagueTableListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                // Displays Team Stats Dialog
+
+                final AlertDialog.Builder teamStatsBuilder = new AlertDialog.Builder(view.getRootView().getContext());
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                final View teamInfoView = inflater.inflate(R.layout.dialog_team_stats, null);
+                teamStatsBuilder.setView(teamInfoView);
+                teamStatsBuilder.setTitle("Team Stats Information");
+                final AlertDialog teamInfoDialog = teamStatsBuilder.create();
+                teamInfoDialog.show();
+
+                final TextView teamName = (TextView) teamInfoView.findViewById(R.id.team_info_teamname);
+                final TextView gamesPlayed = (TextView) teamInfoView.findViewById(R.id.games_played);
+                final TextView gameWins = (TextView) teamInfoView.findViewById(R.id.game_wins);
+                final TextView gameDraws = (TextView) teamInfoView.findViewById(R.id.game_draws);
+                final TextView gameLosses = (TextView) teamInfoView.findViewById(R.id.game_losses);
+                final TextView GA = (TextView) teamInfoView.findViewById(R.id.gam_ga);
+                final TextView GS = (TextView) teamInfoView.findViewById(R.id.game_gs);
+                final TextView GD = (TextView) teamInfoView.findViewById(R.id.game_gd);
+                final TextView pts = (TextView) teamInfoView.findViewById(R.id.game_pts);
+
+                teamReference.child(leagueTableItemList.get(position).getTeamName()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        teamName.setText(leagueTableItemList.get(position).getTeamName());
+                        gamesPlayed.setText(dataSnapshot.child("gamesPlayed").getValue().toString());
+                        gameWins.setText(dataSnapshot.child("wins").getValue().toString());
+                        gameDraws.setText(dataSnapshot.child("draws").getValue().toString());
+                        gameLosses.setText(dataSnapshot.child("losses").getValue().toString());
+                        GA.setText(dataSnapshot.child("goalAgainst").getValue().toString());
+                        GS.setText(dataSnapshot.child("goalScored").getValue().toString());
+                        GD.setText(dataSnapshot.child("goalDifference").getValue().toString());
+                        pts.setText(dataSnapshot.child("point").getValue().toString());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+            }
+        });
+
+
+
 
         return view;//inflater.inflate(R.layout.fragment_standings, container, false);
     }

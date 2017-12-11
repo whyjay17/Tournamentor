@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:orientation="vertical"    android:background="@drawable/bg"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <LinearLayout
@@ -13,13 +13,10 @@
         <TextView
             android:id="@+id/add_match_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Add a New Tournament"
-
+            android:gravity="center"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="#FF5733" />
@@ -34,9 +31,10 @@
         <TextView
             android:id="@+id/textView29"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/add_match_text"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="Tournament Name"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
@@ -63,10 +61,11 @@
         <TextView
             android:id="@+id/textView30"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/add_tournament_name"
             android:layout_weight="1"
             android:text="Tournament Term"
+            android:gravity="center"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
@@ -74,22 +73,24 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/end_date"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_below="@+id/textView32"
                 android:layout_weight="1"
                 android:text="End Date"
+                android:gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/start_date"
+                android:gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_below="@+id/textView30"
                 android:layout_weight="1"
                 android:text="Start Date"
@@ -100,7 +101,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_weight="1"
+        android:layout_weight="1.2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
@@ -109,10 +110,8 @@
             android:id="@+id/next_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_weight="1"
+            android:textSize="18dp"
             android:gravity="center"
             android:text="next" />
     </LinearLayout>

@@ -13,6 +13,15 @@ public class PlayerInfo {
     private String playerName;
     private String teamName;
     private int goals;
+    private String scoredTime;
+
+    public PlayerInfo(String ID, String playerName, String teamName, int goals, String scoredTime) {
+        this.ID = ID;
+        this.playerName = playerName;
+        this.teamName = teamName;
+        this.goals = goals;
+        this.scoredTime = scoredTime;
+    }
 
     public PlayerInfo(String ID, String playerName, String teamName, int goals) {
         this.ID = ID;
@@ -51,5 +60,13 @@ public class PlayerInfo {
 
     public void setGoals(int goals) {
         this.goals = goals;
+    }
+
+    public String getScoredTime() {
+        return scoredTime;
+    }
+
+    public void setScoredTime(String scoredTime) {
+        this.scoredTime = scoredTime;
     }
 }

@@ -47,6 +47,7 @@ public class StarredMatchListTab extends Fragment {
     private List<Integer> scoreBList;
     private List<Boolean> isLiveList;
     private List<Boolean> isStarredList;
+    private List<String> startedTimeList;
 
     String deviceID = ClientMainActivity.passedInDeviceID;
 
@@ -74,6 +75,7 @@ public class StarredMatchListTab extends Fragment {
         scoreBList = new ArrayList<>();
         isLiveList = new ArrayList<>();
         isStarredList = new ArrayList<>();
+        startedTimeList = new ArrayList<>();
 
         //temp starred storage
         userStarredMatchList = new ArrayList<>();
@@ -141,6 +143,7 @@ public class StarredMatchListTab extends Fragment {
                     teamBList.add(snapshot.child("teamB").getValue().toString());
                     scoreBList.add(Integer.parseInt(snapshot.child("scoreB").getValue().toString()));
                     isLiveList.add((boolean)snapshot.child("live").getValue());
+                    startedTimeList.add(snapshot.child("startedTime").getValue().toString());
 
                     if(userStarredMatchList.contains(snapshot.child("id").getValue().toString())) {
                         isStarredList.add(true);
@@ -154,7 +157,7 @@ public class StarredMatchListTab extends Fragment {
                     // Fetches ONLY the match with "isStarred = true"
                     if(isStarredList.get(i) == true) {
                         matchListItems.add(new MatchListItem(matchIDList.get(i), fieldNameList.get(i), gameTimeList.get(i), gameDateList.get(i), teamAList.get(i),
-                                teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), isStarredList.get(i)));
+                                teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), isStarredList.get(i), startedTimeList.get(i)));
                     }
                 }
 
@@ -172,7 +175,7 @@ public class StarredMatchListTab extends Fragment {
      * clearCurrentList clears items inside the data storage for data-redrawing
      */
     public void clearCurrentList() {
-
+        startedTimeList.clear();
         matchIDList.clear();
         fieldNameList.clear();
         gameTimeList.clear();

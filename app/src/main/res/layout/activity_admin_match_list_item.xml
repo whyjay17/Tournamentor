@@ -119,6 +119,7 @@
 
                 <TextView
                     android:id="@+id/score_a"
+                    android:textColor="#FFCA18"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.7"
@@ -148,6 +149,7 @@
 
                 <TextView
                     android:id="@+id/score_b"
+                    android:textColor="#FFCA18"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.7"
@@ -234,6 +236,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:switchMinWidth="60dp"
                 android:text="Live Status" />
         </LinearLayout>
 

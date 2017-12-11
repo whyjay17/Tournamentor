@@ -396,15 +396,6 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
                     }
             );
 
-        } else if(id == R.id.nav_reset) {
-
-            final ClientUserInfo clientUserInfo =  new ClientUserInfo(passedInDeviceID, null);
-            DatabaseReference userReference = rootReference.child("Users");
-
-            // Add new userInfo with resetted info
-
-            rootReference.child("Users").child(passedInDeviceID).child("starredGames").getRef().removeValue();
-
         } else if (id == R.id.nav_info) {
 
             // Handle the nav_info action: Displays dialog that contains the information about the app
@@ -424,6 +415,18 @@ public class ClientMainActivity extends AppCompatActivity implements NavigationV
             builder.setView(dialogView);
             AlertDialog dialog = builder.create();
             dialog.show();
+
+        } else if (id == R.id.nav_share) {
+
+            // Share App Intent
+
+            Intent myIntent = new Intent(Intent.ACTION_SEND);
+            myIntent.setType("text/plain");
+            String shareBody = "This app serves as a scoreboard for soccer tournaments that do not get media attention";
+            String shareSubject = "Tournamentor: Tournament Management App for Amateurs";
+            myIntent.putExtra(Intent.EXTRA_SUBJECT, shareSubject);
+            myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(myIntent, "Tell your friends about Tournamentor!"));
 
         }
 

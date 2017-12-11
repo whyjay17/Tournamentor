@@ -97,9 +97,6 @@ public class AddNewAdminActivity extends AppCompatActivity {
 
             }
         });
-
-
-
     }
 
     /**

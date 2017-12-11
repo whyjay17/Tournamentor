@@ -156,11 +156,43 @@ public class EditAdminActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                firebaseAuth.signOut();
-                // Go Back To Main Menu
-                Intent intent = new Intent(EditAdminActivity.this, StartMenuActivity.class);
-                Toast.makeText(getBaseContext(), "Signed Out", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
+                final AlertDialog.Builder yesNoBuilder = new AlertDialog.Builder(v.getRootView().getContext());
+                LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                final View yesNoDialogView = inflater.inflate(R.layout.dialog_yes_no, null);
+                yesNoBuilder.setView(yesNoDialogView);
+                yesNoBuilder.setTitle("Are you sure?");
+                final AlertDialog yesNoDialog = yesNoBuilder.create();
+                yesNoDialog.show();
+
+                final TextView question = (TextView) yesNoDialogView.findViewById(R.id.yes_no_question);
+                question.setText("Sign out from this account?");
+
+                Button yesButton = (Button) yesNoDialogView.findViewById(R.id.yes_button);
+                Button noButton = (Button) yesNoDialogView.findViewById(R.id.no_button);
+
+                yesButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        // Do action
+                        firebaseAuth.signOut();
+                        // Go Back To Main Menu
+                        Intent intent = new Intent(EditAdminActivity.this, StartMenuActivity.class);
+                        Toast.makeText(getBaseContext(), "Signed Out", Toast.LENGTH_SHORT).show();
+                        startActivity(intent);
+
+                    }
+                });
+
+                noButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        yesNoDialog.dismiss();
+
+                    }
+                });
+
 
             }
         });
@@ -171,26 +203,60 @@ public class EditAdminActivity extends AppCompatActivity {
 
                 //TODO: Add credential and confirmation
 
-                firebaseUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                final AlertDialog.Builder yesNoBuilder = new AlertDialog.Builder(v.getRootView().getContext());
+                LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                final View yesNoDialogView = inflater.inflate(R.layout.dialog_yes_no, null);
+                yesNoBuilder.setView(yesNoDialogView);
+                yesNoBuilder.setTitle("Are you sure?");
+                final AlertDialog yesNoDialog = yesNoBuilder.create();
+                yesNoDialog.show();
+
+                final TextView question = (TextView) yesNoDialogView.findViewById(R.id.yes_no_question);
+                question.setText("Delete this account?");
+
+                Button yesButton = (Button) yesNoDialogView.findViewById(R.id.yes_button);
+                Button noButton = (Button) yesNoDialogView.findViewById(R.id.no_button);
+
+                yesButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onClick(View v) {
+
+                        // Do action
+
+                        firebaseUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
+                                firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
 
-                                    // Go Back To Main Menu
-                                    Intent intent = new Intent(EditAdminActivity.this, StartMenuActivity.class);
-                                    channelsReference.child(firebaseUser.getUid()).getRef().removeValue();
-                                    Toast.makeText(getBaseContext(), "Account Deleted", Toast.LENGTH_SHORT).show();
-                                    startActivity(intent);
+                                            // Go Back To Main Menu
+                                            Intent intent = new Intent(EditAdminActivity.this, StartMenuActivity.class);
+                                            channelsReference.child(firebaseUser.getUid()).getRef().removeValue();
+                                            Toast.makeText(getBaseContext(), "Account Deleted", Toast.LENGTH_SHORT).show();
+                                            startActivity(intent);
 
-                                }
+                                        }
+                                    }
+                                });
+
                             }
                         });
 
                     }
                 });
+
+                noButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        yesNoDialog.dismiss();
+
+                    }
+                });
+
+
 
             }
         });

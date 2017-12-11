@@ -1,5 +1,8 @@
 package ykim164cs242.tournamentor.Adapter.Client;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
@@ -14,7 +17,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -24,6 +30,7 @@ import ykim164cs242.tournamentor.InformationStorage.GameInfo;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.ListItem.TournamentListItem;
 import ykim164cs242.tournamentor.R;
+import ykim164cs242.tournamentor.Utils.DateHandler;
 
 /**
  * MatchListAdapter represents an Adapter that can be used in the ListView of matches.
@@ -40,10 +47,14 @@ public class MatchListAdapter extends BaseAdapter{
 
     Boolean isStarred;
 
+
     String deviceID = ClientMainActivity.passedInDeviceID;
     String channelID = ClientMainActivity.passedInChannelID;
     String tournamentName = ClientMainActivity.passedInTournamentName;
     String gameID;
+
+    private String startTime;
+    private String diff;
 
     List<String> starredGameList;
 
@@ -100,6 +111,8 @@ public class MatchListAdapter extends BaseAdapter{
         scoreA.setText(Integer.toString(matchList.get(position).getScoreA()));
         scoreB.setText(Integer.toString(matchList.get(position).getScoreB()));
 
+        startTime = matchList.get(position).getStartedTime();
+
         // dummy data for refreshing the real-time DB
 
         matchReference = rootReference.child("Channels").child(channelID).child("tournaments")
@@ -111,7 +124,29 @@ public class MatchListAdapter extends BaseAdapter{
         // Live Status : Blink effect if game is live
 
         if(matchList.get(position).isLive()) {
-            // Blink Text If Live
+
+            // Set Start Time : Start time is recorded when the admin creates a game.
+
+            String timeStamp = new SimpleDateFormat("HH : mm").format(new Date());
+            try {
+                diff = Long.toString(DateHandler.minuteDifference(startTime, timeStamp));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            liveStatus.setText("Game Started: " + startTime + "   " + "[ LIVE ]");//"Current Game Time : "+ diff + "'");
+
+            //Blink effect
+
+            gameTime.setText(Integer.toString(Integer.parseInt(diff) + 1) + "'");
+            ObjectAnimator textBlinker = ObjectAnimator.ofInt(gameTime, "textColor", Color.GREEN, Color.TRANSPARENT);
+            textBlinker.setDuration(800);
+            textBlinker.setEvaluator(new ArgbEvaluator());
+            textBlinker.setRepeatCount(ValueAnimator.INFINITE);
+            textBlinker.setRepeatMode(ValueAnimator.REVERSE);
+            textBlinker.start();
+
+
         } else {
             liveStatus.setText("");
         }

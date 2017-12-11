@@ -18,10 +18,13 @@ public class MatchListItem {
     private boolean isLive;
     private boolean isStarred;
 
+
+    private String startedTime;
+
     // Constructor
 
-    public MatchListItem(String id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive, boolean isStarred) {
-        this.id = id;
+    public MatchListItem(String id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive, boolean isStarred, String startedTime) {
+            this.id = id;
         this.fieldName = fieldName;
         this.gameTime = gameTime;
         this.gameDate = gameDate;
@@ -31,6 +34,8 @@ public class MatchListItem {
         this.scoreB = scoreB;
         this.isLive = isLive;
         this.isStarred = isStarred;
+        this.startedTime = startedTime;
+
     }
 
     // Getters and Setters
@@ -114,4 +119,14 @@ public class MatchListItem {
     public void setStarred(boolean starred) {
         isStarred = starred;
     }
+
+    public String getStartedTime() {
+        return startedTime;
+    }
+
+    public void setStartedTime(String startedTime) {
+        this.startedTime = startedTime;
+    }
+
+
 }

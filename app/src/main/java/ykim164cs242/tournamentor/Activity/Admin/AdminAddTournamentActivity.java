@@ -14,16 +14,16 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import ykim164cs242.tournamentor.Activity.Client.ClientTournamentListActivity;
-import ykim164cs242.tournamentor.Activity.Client.SelectChannelActivity;
 import ykim164cs242.tournamentor.InformationStorage.TournamentInfo;
 import ykim164cs242.tournamentor.R;
+import ykim164cs242.tournamentor.Utils.DateHandler;
 
 /**
  * AdminAddTournamentActivity represents a screen where the Admin can add a new
@@ -42,7 +42,6 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
     private Button nextButton;
     private String channelID;
     private String tournamentName;
-
 
     private String startDate;
     private String endDate;
@@ -117,8 +116,21 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month += 1;
                 String date = month + "-" + dayOfMonth + "-" + year;
-                startDateTextView.setText(date);
-                startDate = date;
+
+                if(endDate != null && !DateHandler.isValidTerm(date, endDate)) {
+
+                    // Invalid date message
+
+                    Toast.makeText(getBaseContext(), "Invalid Term! The start date must be come before or be same as the end date", Toast.LENGTH_SHORT).show();
+
+                } else if(!DateHandler.isNotOver(date)) {
+
+                    Toast.makeText(getBaseContext(), "This date is already over", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    startDateTextView.setText(date);
+                    startDate = date;
+                }
             }
         };
 
@@ -128,8 +140,22 @@ public class AdminAddTournamentActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month += 1;
                 String date = month + "-" + dayOfMonth + "-" + year;
-                endDateTextView.setText(date);
-                endDate = date;
+
+                if(startDate != null && !DateHandler.isValidTerm(startDate, date)) {
+
+                    // Invalid date message
+
+                    Toast.makeText(getBaseContext(), "Invalid Term! The end date must be come after or be same as the start date", Toast.LENGTH_SHORT).show();
+
+                } else if(!DateHandler.isNotOver(date)) {
+
+                    Toast.makeText(getBaseContext(), "This date is already over", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    endDateTextView.setText(date);
+                    endDate = date;
+                }
             }
         };
 

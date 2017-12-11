@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_vertical"
+    android:background="@drawable/bg"
     tools:context="ykim164cs242.tournamentor.Activity.Admin.AdminTournamentMenuActivity">
 
     <LinearLayout
@@ -65,7 +66,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:text="Add Tournament" />
+            android:text="Add a Tournament" />
     </LinearLayout>
 
     <LinearLayout
@@ -82,7 +83,7 @@
             android:layout_marginBottom="20dp"
 
             android:layout_weight="1"
-            android:text="Delete Tournament" />
+            android:text="Delete this Tournament" />
 
         <Button
             android:id="@+id/set_game_schedule_button"
@@ -91,7 +92,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:text="Set Game Schedule" />
+            android:text="Set Game Schedules" />
 
     </LinearLayout>
 

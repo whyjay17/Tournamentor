@@ -57,6 +57,8 @@ public class AdminMatchListActivity extends AppCompatActivity {
     private List<String> teamBList;
     private List<Integer> scoreBList;
     private List<Boolean> isLiveList;
+    private List<String> startedTimeList;
+    private List<Boolean> isOverList;
 
     private String tournamentName;
 
@@ -95,6 +97,8 @@ public class AdminMatchListActivity extends AppCompatActivity {
         teamBList = new ArrayList<>();
         scoreBList = new ArrayList<>();
         isLiveList = new ArrayList<>();
+        startedTimeList = new ArrayList<>();
+        isOverList = new ArrayList<>();
 
         adapter = new AdminMatchListAdapter(this, adminMatchListItems);
         matchListView.setAdapter(adapter);
@@ -142,18 +146,29 @@ public class AdminMatchListActivity extends AppCompatActivity {
                     // ID Format: Date + TeamA + vs + TeamB
                     matchIDList.add(snapshot.child("id").getValue().toString());
                     fieldNameList.add(snapshot.child("fieldName").getValue().toString());
+
+                    // If not live show game time
+
+                    //if(!(boolean)snapshot.child("live").getValue())
                     gameTimeList.add(snapshot.child("gameTime").getValue().toString());
+
+                    // If live show current game time
+
+                    //else gameTimeList.add("Game Started : " + snapshot.child("startedTime").getValue().toString());
+
                     gameDateList.add(snapshot.child("gameDate").getValue().toString());
                     teamAList.add(snapshot.child("teamA").getValue().toString());
                     scoreAList.add(Integer.parseInt(snapshot.child("scoreA").getValue().toString()));
                     teamBList.add(snapshot.child("teamB").getValue().toString());
                     scoreBList.add(Integer.parseInt(snapshot.child("scoreB").getValue().toString()));
                     isLiveList.add((boolean)snapshot.child("live").getValue());
+                    startedTimeList.add(snapshot.child("startedTime").getValue().toString());
+                    isOverList.add((boolean)snapshot.child("over").getValue());
                 }
 
                 for(int i = 0; i < fieldNameList.size(); i++) {
                     adminMatchListItems.add(new AdminMatchListItem(matchIDList.get(i), fieldNameList.get(i), gameTimeList.get(i), gameDateList.get(i), teamAList.get(i),
-                            teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), tournamentName));
+                            teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), tournamentName, startedTimeList.get(i), isOverList.get(i)));
                 }
 
                 adapter.notifyDataSetChanged();
@@ -172,6 +187,8 @@ public class AdminMatchListActivity extends AppCompatActivity {
      */
     public void clearCurrentList() {
 
+        isOverList.clear();
+        startedTimeList.clear();
         matchIDList.clear();
         fieldNameList.clear();
         gameTimeList.clear();

@@ -12,9 +12,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -26,8 +28,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Handler;
 
 import ykim164cs242.tournamentor.Activity.Client.ClientMainActivity;
+import ykim164cs242.tournamentor.Activity.Client.ClientTournamentListActivity;
 import ykim164cs242.tournamentor.Activity.Client.SelectChannelActivity;
 import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.Adapter.Client.MatchListAdapter;
@@ -46,6 +50,7 @@ public class MatchListTab extends Fragment {
     private MatchListAdapter adapter;
     private List<MatchListItem> matchListItems;
     private List<String> userStarredMatchList;
+    private SwipeRefreshLayout swipeLayout;
 
     // Storages for parsed JSON data (repoName, userName, description of repositories)
     private List<String> matchIDList;
@@ -58,6 +63,7 @@ public class MatchListTab extends Fragment {
     private List<Integer> scoreBList;
     private List<Boolean> isLiveList;
     private List<Boolean> isStarredList;
+    private List<String> startedTimeList;
 
     private List<String> notificationList;
     private List<Boolean> notificationChangedList;
@@ -85,12 +91,14 @@ public class MatchListTab extends Fragment {
     DatabaseReference userReference;
     DatabaseReference userNotificationReference;
     String deviceID = ClientMainActivity.passedInDeviceID;
+    String channelID = ClientMainActivity.passedInChannelID;
+    String tournamentName = ClientMainActivity.passedInTournamentName;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.tab_match_list, container, false);
+        final View view = inflater.inflate(R.layout.tab_match_list, container, false);
         matchListView = (ListView) view.findViewById(R.id.match_list);
 
         matchListItems = new ArrayList<>();
@@ -104,6 +112,7 @@ public class MatchListTab extends Fragment {
         scoreBList = new ArrayList<>();
         isLiveList = new ArrayList<>();
         isStarredList = new ArrayList<>();
+        startedTimeList = new ArrayList<>();
 
         notificationList = new ArrayList<>();
         notificationChangedList = new ArrayList<>();
@@ -112,7 +121,7 @@ public class MatchListTab extends Fragment {
         userStarredMatchList = new ArrayList<>();
 
         String channelId = ClientMainActivity.passedInChannelID;
-        String tournamentName = ClientMainActivity.passedInTournamentName;
+        final String tournamentName = ClientMainActivity.passedInTournamentName;
 
         // Set Database reference path
 
@@ -120,6 +129,32 @@ public class MatchListTab extends Fragment {
         matchReference = tournamentReference.child("games");
         userReference = rootReference.child("Users").child(deviceID).child("starredGames");
         userNotificationReference = rootReference.child("Users").child(deviceID);
+
+        // Swipe Refresh Settings
+
+        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
+
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+
+            @Override
+            public void onRefresh() {
+                swipeLayout.setRefreshing(true);
+                view.refreshDrawableState();
+                swipeLayout.setRefreshing(false);
+            }
+        });
+
+        // Refresh by clicking
+        matchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String matchID = matchIDList.get(position);
+                matchReference.child(matchID).child("dummy").setValue(generateRandomString());
+
+            }
+        });
 
         // Initialize user notification settings
 
@@ -279,6 +314,7 @@ public class MatchListTab extends Fragment {
                     teamBList.add(snapshot.child("teamB").getValue().toString());
                     scoreBList.add(Integer.parseInt(snapshot.child("scoreB").getValue().toString()));
                     isLiveList.add((boolean)snapshot.child("live").getValue());
+                    startedTimeList.add(snapshot.child("startedTime").getValue().toString());
 
                     if(userStarredMatchList.contains(snapshot.child("id").getValue().toString())) {
                         isStarredList.add(true);
@@ -289,7 +325,7 @@ public class MatchListTab extends Fragment {
 
                 for(int i = 0; i < fieldNameList.size(); i++) {
                     matchListItems.add(new MatchListItem(matchIDList.get(i), fieldNameList.get(i), gameTimeList.get(i), gameDateList.get(i), teamAList.get(i),
-                            teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), isStarredList.get(i)));
+                            teamBList.get(i),scoreAList.get(i),scoreBList.get(i), isLiveList.get(i), isStarredList.get(i), startedTimeList.get(i)));
                 }
 
                 adapter.notifyDataSetChanged();
@@ -311,6 +347,7 @@ public class MatchListTab extends Fragment {
      */
     public void clearCurrentList() {
 
+        startedTimeList.clear();
         matchIDList.clear();
         fieldNameList.clear();
         gameTimeList.clear();
@@ -359,4 +396,17 @@ public class MatchListTab extends Fragment {
         notificationManager.notify(4444, notification.build());
     }
 
+    public static String generateRandomString() {
+
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 18) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+
+    }
 }

@@ -34,11 +34,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import ykim164cs242.tournamentor.Activity.Client.ClientMainActivity;
 import ykim164cs242.tournamentor.Adapter.Client.TeamListAdapter;
 import ykim164cs242.tournamentor.InformationStorage.GameInfo;
 import ykim164cs242.tournamentor.ListItem.TeamListItem;
 import ykim164cs242.tournamentor.R;
+import ykim164cs242.tournamentor.Utils.DateHandler;
 
 /**
  * AdminAddMatchActivity represents a screen where the Admin can add a new
@@ -154,10 +154,17 @@ public class AdminAddMatchActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month += 1;
                 String date = month + "-" + dayOfMonth + "-" + year;
-                inputMatchDate.setText(date);
 
-                gameDate = date;
+                if(!DateHandler.isNotOver(date)) {
 
+                    Toast.makeText(getBaseContext(), "This date is already over", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    inputMatchDate.setText(date);
+                    gameDate = date;
+
+                }
             }
         };
 
@@ -329,10 +336,10 @@ public class AdminAddMatchActivity extends AppCompatActivity {
                 teamB = inputTeamB.getText().toString();
 
                 // Game ID Format is date + teamA + teamB
-                String gameID = gameDate + teamA + teamB;
+                String gameID = gameDate + gameTime + teamA + teamB;
 
                 // Adds the gameInfo to the Databse
-                GameInfo gameInfo = new GameInfo(gameID, fieldName, gameTime, gameDate, teamA, teamB, "0", "0", false, tournamentName);
+                GameInfo gameInfo = new GameInfo(gameID, fieldName, gameTime, gameDate, teamA, teamB, "0", "0", false, tournamentName, "0", false);
                 rootReference.child("Channels").child(firebaseUser.getUid()).child("tournaments").child(tournamentName).child("games").child(gameID).setValue(gameInfo);
 
                 Intent intent = new Intent(AdminAddMatchActivity.this, AdminMatchListActivity.class);

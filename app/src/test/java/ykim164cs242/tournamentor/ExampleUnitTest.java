@@ -1,22 +1,19 @@
 package ykim164cs242.tournamentor;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import org.junit.Test;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import ykim164cs242.tournamentor.Fragments.Client.LeagueTableFragment;
 import ykim164cs242.tournamentor.ListItem.LeagueTableItem;
-import ykim164cs242.tournamentor.ListItem.MatchListItem;
 import ykim164cs242.tournamentor.ListItem.ScoreTableItem;
+import ykim164cs242.tournamentor.Utils.DateHandler;
 import ykim164cs242.tournamentor.Utils.LevenshteinDistance;
 
 import static org.junit.Assert.*;
@@ -33,6 +30,138 @@ public class ExampleUnitTest {
     private List<LeagueTableItem> leagueTableItems;
     private List<LeagueTableItem> rankedLeagueTableItems;
 
+
+    /**
+     * checks if 01/05/2017 is a valid date -> should be invalid (already over)
+     */
+    @Test
+    public void timeDifferenceTest() throws Exception {
+
+        String time1 = "16 : 00";
+        String time2 = "19 : 00";
+
+        SimpleDateFormat format = new SimpleDateFormat("HH : mm");
+        Date date1 = format.parse(time1);
+        Date date2 = format.parse(time2);
+        long difference = date2.getTime() - date1.getTime();
+
+        //Long.toString(DateHandler.minuteDifference(timeStamp, matchList.get(position).getStartedTime()))
+
+        assertTrue(TimeUnit.MILLISECONDS.toMinutes(difference) == 180);
+
+        //assertTrue(!dateValidity);
+    }
+
+    /**
+     * checks if 01/05/2017 is a valid date -> should be invalid (already over)
+     */
+    @Test
+    public void checkDateVSToday1() throws Exception {
+
+        String date = 1 + "-" + 5 + "-" + 2017;
+
+        boolean dateValidity = DateHandler.isNotOver(date);
+
+        assertTrue(!dateValidity);
+    }
+
+    /**
+     * checks if 01/05/2018 is a valid date -> should be valid (not over)
+     */
+    @Test
+    public void checkDateVSToday2() throws Exception {
+
+        String date = 1 + "-" + 5 + "-" + 2018;
+
+        boolean dateValidity = DateHandler.isNotOver(date);
+
+        assertTrue(dateValidity);
+    }
+
+    /**
+     * checks if 01/05/2018 is a valid date -> should be valid (today)
+     */
+    @Test
+    public void checkDateVSToday3() throws Exception {
+
+        String date = 12 + "-" + 9 + "-" + 2017;
+
+        boolean dateValidity = DateHandler.isNotOver(date);
+
+        assertTrue(dateValidity);
+    }
+
+    /**
+     * checks if 01/05/2017 ~ 01/07/2017 is a valid date -> should be valid
+     */
+    @Test
+    public void checkValidDateTest1() throws Exception {
+
+        String start = 1 + "-" + 5 + "-" + 2017;
+        String end = 1 + "-" + 7 + "-" + 2017;
+
+        boolean dateValidity = DateHandler.isValidTerm(start, end);
+
+        assertTrue(dateValidity);
+    }
+
+    /**
+     * checks if 01/05/2017 ~ 01/03/2017 is a valid date -> should be invalid
+     */
+    @Test
+    public void checkValidDateTest2() throws Exception {
+
+        String start = 1 + "-" + 5 + "-" + 2017;
+        String end = 1 + "-" + 3 + "-" + 2017;
+
+        boolean dateValidity = DateHandler.isValidTerm(start, end);
+
+        assertTrue(!dateValidity);
+    }
+
+    /**
+     * checks if 01/05/2017 ~ 01/05/2017 is a valid date -> should be valid
+     */
+    @Test
+    public void checkValidDateTest3() throws Exception {
+
+        String start = 1 + "-" + 5 + "-" + 2017;
+        String end = 1 + "-" + 5 + "-" + 2017;
+
+        boolean dateValidity = DateHandler.isValidTerm(start, end);
+
+        assertTrue(dateValidity);
+    }
+
+    /**
+     * checks if 01/05/2017 ~ 01/12/2016 is a valid date -> should be invalid
+     */
+    @Test
+    public void checkValidDateTest4() throws Exception {
+
+        String start = 1 + "-" + 5 + "-" + 2017;
+        String end = 1 + "-" + 12 + "-" + 2016;
+
+        boolean dateValidity = DateHandler.isValidTerm(start, end);
+
+        assertTrue(!dateValidity);
+    }
+
+    /**
+     * checks if 02/05/2017 ~ 01/12/2017 is a valid date -> should be invalid
+     */
+    @Test
+    public void checkValidDateTest5() throws Exception {
+
+        String start = 2 + "-" + 5 + "-" + 2017;
+        String end = 1 + "-" + 12 + "-" + 2017;
+
+        boolean dateValidity = DateHandler.isValidTerm(start, end);
+
+        assertTrue(!dateValidity);
+    }
+
+    /////////////////////////////////////////////////////////////// Week 3 Tests Below //////////////////////////////////////////////////////////////////////////////
 
     /**
      * stringSimilarityTest tests whether two given names are similar

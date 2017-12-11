@@ -1,11 +1,15 @@
 package ykim164cs242.tournamentor.Activity.Admin;
 
+import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import ykim164cs242.tournamentor.Activity.Common.StartMenuActivity;
 import ykim164cs242.tournamentor.ListItem.AdminMatchListItem;
 import ykim164cs242.tournamentor.R;
 
@@ -104,9 +109,11 @@ public class AdminTournamentMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                // Parse date
+
                 Intent intent = new Intent(AdminTournamentMenuActivity.this, AdminAddTournamentActivity.class);
-                //intent.putExtra("startDate", startDate);
-                //intent.putExtra("endDate", endDate);
+                intent.putExtra("startDate", startDate);
+                intent.putExtra("endDate", endDate);
                 intent.putExtra("tournamentName", tournamentName);
 
                 startActivity(intent);
@@ -118,14 +125,48 @@ public class AdminTournamentMenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // Delete tournament data from DB
+                final AlertDialog.Builder yesNoBuilder = new AlertDialog.Builder(v.getRootView().getContext());
+                LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                final View yesNoDialogView = inflater.inflate(R.layout.dialog_yes_no, null);
+                yesNoBuilder.setView(yesNoDialogView);
+                yesNoBuilder.setTitle("Are you sure?");
+                final AlertDialog yesNoDialog = yesNoBuilder.create();
+                yesNoDialog.show();
 
-                rootReference.child("Channels").child(firebaseUser.getUid()).child("tournaments").child(tournamentName).getRef().removeValue();
+                final TextView question = (TextView) yesNoDialogView.findViewById(R.id.yes_no_question);
+                question.setText("Delete this tournament?");
 
-                Intent intent = new Intent(AdminTournamentMenuActivity.this, AdminTournamentListActivity.class);
-                startActivity(intent);
+                Button yesButton = (Button) yesNoDialogView.findViewById(R.id.yes_button);
+                Button noButton = (Button) yesNoDialogView.findViewById(R.id.no_button);
+
+                yesButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        // Do action
+                        // Delete tournament data from DB
+
+                        rootReference.child("Channels").child(firebaseUser.getUid()).child("tournaments").child(tournamentName).getRef().removeValue();
+
+                        Intent intent = new Intent(AdminTournamentMenuActivity.this, AdminTournamentListActivity.class);
+                        startActivity(intent);
+
+                    }
+                });
+
+                noButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        yesNoDialog.dismiss();
+
+                    }
+                });
+
+
             }
         });
 
     }
+
 }

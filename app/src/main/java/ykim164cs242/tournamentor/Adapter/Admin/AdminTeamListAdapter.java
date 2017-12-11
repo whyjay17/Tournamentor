@@ -1,7 +1,9 @@
 package ykim164cs242.tournamentor.Adapter.Admin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.List;
 
 import ykim164cs242.tournamentor.Activity.Admin.AdminAddTournamentAddTeamActivity;
+import ykim164cs242.tournamentor.Activity.Admin.EditAdminActivity;
+import ykim164cs242.tournamentor.Activity.Common.StartMenuActivity;
 import ykim164cs242.tournamentor.InformationStorage.TeamInfo;
 import ykim164cs242.tournamentor.ListItem.AdminTeamListItem;
 import ykim164cs242.tournamentor.ListItem.TeamListItem;
@@ -88,8 +93,42 @@ public class AdminTeamListAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
 
-                rootReference.child("Channels").child(firebaseUser.getUid()).child("tournaments")
-                        .child(teamList.get(position).getParticipatingTournament()).child("teams").child(teamList.get(position).getTeamName()).getRef().removeValue();
+                final AlertDialog.Builder yesNoBuilder = new AlertDialog.Builder(v.getRootView().getContext());
+                LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                final View yesNoDialogView = inflater.inflate(R.layout.dialog_yes_no, null);
+                yesNoBuilder.setView(yesNoDialogView);
+                yesNoBuilder.setTitle("Are you sure?");
+                final AlertDialog yesNoDialog = yesNoBuilder.create();
+                yesNoDialog.show();
+
+                final TextView question = (TextView) yesNoDialogView.findViewById(R.id.yes_no_question);
+                question.setText("Delete this team?");
+
+                Button yesButton = (Button) yesNoDialogView.findViewById(R.id.yes_button);
+                Button noButton = (Button) yesNoDialogView.findViewById(R.id.no_button);
+
+                yesButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        // Do action
+
+                        rootReference.child("Channels").child(firebaseUser.getUid()).child("tournaments")
+                                .child(teamList.get(position).getParticipatingTournament()).child("teams").child(teamList.get(position).getTeamName()).getRef().removeValue();
+                        yesNoDialog.dismiss();
+                    }
+                });
+
+                noButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        yesNoDialog.dismiss();
+
+                    }
+                });
+
+
             }
         });
 

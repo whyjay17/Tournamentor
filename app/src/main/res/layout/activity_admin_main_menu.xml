@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_vertical"
+    android:background="@drawable/bg"
     tools:context="ykim164cs242.tournamentor.Activity.Admin.AdminTournamentMenuActivity">
 
     <TextView
@@ -38,7 +39,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
-        android:text="Edit Admin Info" />
+        android:text="Edit Channel Name" />
 
     <Button
         android:id="@+id/manage_tournament_button"
@@ -66,6 +67,6 @@
         android:layout_marginBottom="20dp"
 
         android:layout_weight="1"
-        android:text="Delete Channel" />
+        android:text="Delete This Channel" />
 
 </LinearLayout>

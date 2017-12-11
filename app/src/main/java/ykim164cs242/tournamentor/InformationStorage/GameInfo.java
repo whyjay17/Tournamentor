@@ -20,12 +20,14 @@ public class GameInfo {
     private boolean isLive;
     private String tournamentName;
     private PlayerInfo[] scorers;
+    private String startedTime;
+    private boolean isOver = false;
 
     private String winner;
     private String notificationTitle;
     private String notificationBody;
 
-    public GameInfo(String ID, String fieldName, String gameTime, String gameDate, String teamA, String teamB, String scoreA, String scoreB, boolean isLive, String tournamentName) {
+    public GameInfo(String ID, String fieldName, String gameTime, String gameDate, String teamA, String teamB, String scoreA, String scoreB, boolean isLive, String tournamentName, String startedTime, boolean isOver) {
         this.ID = ID;
         this.fieldName = fieldName;
         this.gameTime = gameTime;
@@ -37,6 +39,8 @@ public class GameInfo {
         this.isLive = isLive;
         this.tournamentName = tournamentName;
         this.winner = "draw"; //Default is draw
+        this.startedTime = startedTime; //Default is draw
+        this.isOver = false;
     }
 
     public GameInfo(String ID) {
@@ -146,5 +150,21 @@ public class GameInfo {
 
     public void setScorers(PlayerInfo[] scorers) {
         this.scorers = scorers;
+    }
+
+    public String getStartedTime() {
+        return startedTime;
+    }
+
+    public void setStartedTime(String startedTime) {
+        this.startedTime = startedTime;
+    }
+
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setOver(boolean isOver) {
+        isOver = isOver;
     }
 }

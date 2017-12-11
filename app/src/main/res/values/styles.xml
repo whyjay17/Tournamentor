@@ -10,10 +10,12 @@
 
     <style name="TournamentorTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorAccent">@android:color/holo_orange_dark</item>
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="TournamentorThemeWithActionBar" parent="Theme.AppCompat">
         <item name="colorAccent">@android:color/holo_orange_dark</item>
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="TournamentorTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

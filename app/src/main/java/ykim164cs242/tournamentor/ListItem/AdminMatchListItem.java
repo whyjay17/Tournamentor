@@ -17,9 +17,10 @@ public class AdminMatchListItem {
     private int scoreB;
     private boolean isLive;
     private String tournamentName;
+    private String startedTime;
+    private boolean isOver;
 
-
-    public AdminMatchListItem(String id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive, String tournamentName) {
+    public AdminMatchListItem(String id, String fieldName, String gameTime, String gameDate, String teamA, String teamB, int scoreA, int scoreB, boolean isLive, String tournamentName, String startedTime, boolean isOver) {
         this.id = id;
         this.fieldName = fieldName;
         this.gameTime = gameTime;
@@ -30,6 +31,8 @@ public class AdminMatchListItem {
         this.scoreB = scoreB;
         this.isLive = isLive;
         this.tournamentName = tournamentName;
+        this.startedTime = startedTime;
+        this.isOver = isOver;
     }
 
     public String getId() {
@@ -110,5 +113,13 @@ public class AdminMatchListItem {
 
     public void setTournamentName(String tournamentName) {
         this.tournamentName = tournamentName;
+    }
+
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setOver(boolean isOver) {
+        isOver = isOver;
     }
 }
