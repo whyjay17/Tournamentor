@@ -9,4 +9,7 @@ Scoreboard allows fans to monitor scores in real-time from anywhere in the world
 Two user interfaces (admin and client). Admin creates an account and game pin to create and edit tournaments and games. Admins can create and edit participating teams, tournament information, score, and other key facets of the game live. 
 Client users can join and view games using the game pin without the need for an account. Changes are reflected in real time via a clean and easy to navigate UI.
 
+# Used Tools
+- Android Studio
+- Firebase (Real-time Database)
 
